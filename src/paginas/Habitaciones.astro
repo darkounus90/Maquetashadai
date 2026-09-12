@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Base from '../layouts/Base.astro';
 import Encabezado from '../components/Encabezado.astro';
 import Foto from '../components/Foto.astro';
@@ -158,12 +159,18 @@ const aloAncho = habitaciones[2];
       </h2>
       <dl class="revelar mt-10 grid gap-x-14 md:grid-cols-2">
         {
-          servicios[lang].map(([nombre, desc]) => (
-            <div class="border-b border-line py-4">
-              <dt class="text-sm font-semibold">{nombre}</dt>
-              <dd class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</dd>
-            </div>
-          ))
+          servicios.map((s) => {
+            const [nombre, desc] = s[lang];
+            return (
+              <div class="border-b border-line py-4">
+                <dt class="flex items-center gap-2.5 text-sm font-semibold">
+                  <Icon name={s.icono} class="h-5 w-5 shrink-0 text-brasa-luz" />
+                  {nombre}
+                </dt>
+                <dd class="mt-1.5 pl-[1.875rem] text-sm leading-relaxed text-ink-3">{desc}</dd>
+              </div>
+            );
+          })
         }
       </dl>
     </div>

@@ -1,4 +1,5 @@
 ---
+import { Icon } from 'astro-icon/components';
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FranjaConfianza from '../components/FranjaConfianza.astro';
@@ -49,7 +50,7 @@ const grupos = {
   es: ['La estadía', 'La casa', 'Detalles'],
   en: ['The stay', 'The house', 'Details'],
 };
-const chunks = [servicios[lang].slice(0, 4), servicios[lang].slice(4, 8), servicios[lang].slice(8, 12)];
+const chunks = [servicios.slice(0, 4), servicios.slice(4, 8), servicios.slice(8, 12)];
 
 const [principal, ...secundarias] = habitaciones;
 ---
@@ -163,12 +164,18 @@ const [principal, ...secundarias] = habitaciones;
             <div class="revelar" style={`transition-delay:${gi * 80}ms`}>
               <h3 class="rotulo text-brasa-luz">{grupos[lang][gi]}</h3>
               <dl class="mt-5 divide-y divide-line border-t border-line">
-                {grupo.map(([nombre, desc]) => (
-                  <div class="py-4">
-                    <dt class="text-sm font-semibold">{nombre}</dt>
-                    <dd class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</dd>
-                  </div>
-                ))}
+                {grupo.map((s) => {
+                  const [nombre, desc] = s[lang];
+                  return (
+                    <div class="py-4">
+                      <dt class="flex items-center gap-2.5 text-sm font-semibold">
+                        <Icon name={s.icono} class="h-5 w-5 shrink-0 text-brasa-luz" />
+                        {nombre}
+                      </dt>
+                      <dd class="mt-1.5 pl-[1.875rem] text-sm leading-relaxed text-ink-3">{desc}</dd>
+                    </div>
+                  );
+                })}
               </dl>
             </div>
           ))

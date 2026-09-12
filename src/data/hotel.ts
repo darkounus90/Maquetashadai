@@ -178,36 +178,71 @@ export const habitaciones: Habitacion[] = [
 // Servicios
 // ---------------------------------------------------------------------------
 
-export const servicios = {
-  es: [
-    ['Desayuno incluido', 'Americano, servido en la terraza.'],
-    ['Piscina y azotea privada', 'Para dormir al aire libre bajo las estrellas.'],
-    ['Jacuzzi', 'Bañera de hidromasaje en las habitaciones.'],
-    ['Recepción 24 horas', 'Siempre hay alguien esperándolo.'],
-    ['Parqueadero privado gratis', 'Dentro del hotel, sin costo.'],
-    ['WiFi gratis', 'En todo el hotel.'],
-    ['Aire acondicionado', 'En todas las habitaciones.'],
-    ['Restaurante y bar', 'Desayuno, almuerzo, cena y cocteles.'],
-    ['Servicio a la habitación', 'Sin salir de su cuarto.'],
-    ['Mini gimnasio', 'Al aire libre, con vista al desierto.'],
-    ['Mascotas bienvenidas', 'Sin costo adicional, bajo petición.'],
-    ['Acceso para movilidad reducida', 'Instalaciones adaptadas.'],
-  ],
-  en: [
-    ['Breakfast included', 'American breakfast, served on the terrace.'],
-    ['Pool and private rooftop', 'Sleep outdoors under the stars.'],
-    ['Jacuzzi', 'Hot tub in the rooms.'],
-    ['24-hour reception', 'Someone is always waiting for you.'],
-    ['Free private parking', 'On site, at no cost.'],
-    ['Free WiFi', 'Throughout the hotel.'],
-    ['Air conditioning', 'In every room.'],
-    ['Restaurant and bar', 'Breakfast, lunch, dinner and cocktails.'],
-    ['Room service', 'Without leaving your room.'],
-    ['Outdoor gym', 'Open air, facing the desert.'],
-    ['Pets welcome', 'Free of charge, on request.'],
-    ['Accessible facilities', 'Adapted for reduced mobility.'],
-  ],
-};
+// Un solo arreglo con el icono dentro, para que las tres pantallas que listan
+// servicios (inicio, habitaciones y la ficha de cada habitación) usen el mismo
+// icono sin repetirlo por idioma. Iconos de Phosphor.
+export const servicios = [
+  {
+    icono: 'ph:coffee',
+    es: ['Desayuno incluido', 'Americano, servido en la terraza.'],
+    en: ['Breakfast included', 'American breakfast, served on the terrace.'],
+  },
+  {
+    icono: 'ph:swimming-pool',
+    es: ['Piscina y azotea privada', 'Para dormir al aire libre bajo las estrellas.'],
+    en: ['Pool and private rooftop', 'Sleep outdoors under the stars.'],
+  },
+  {
+    icono: 'ph:bathtub',
+    es: ['Jacuzzi', 'Bañera de hidromasaje en las habitaciones.'],
+    en: ['Jacuzzi', 'Hot tub in the rooms.'],
+  },
+  {
+    icono: 'ph:clock',
+    es: ['Recepción 24 horas', 'Siempre hay alguien esperándolo.'],
+    en: ['24-hour reception', 'Someone is always waiting for you.'],
+  },
+  {
+    icono: 'ph:car-profile',
+    es: ['Parqueadero privado gratis', 'Dentro del hotel, sin costo.'],
+    en: ['Free private parking', 'On site, at no cost.'],
+  },
+  {
+    icono: 'ph:wifi-high',
+    es: ['WiFi gratis', 'En todo el hotel.'],
+    en: ['Free WiFi', 'Throughout the hotel.'],
+  },
+  {
+    icono: 'ph:snowflake',
+    es: ['Aire acondicionado', 'En todas las habitaciones.'],
+    en: ['Air conditioning', 'In every room.'],
+  },
+  {
+    icono: 'ph:fork-knife',
+    es: ['Restaurante y bar', 'Desayuno, almuerzo, cena y cocteles.'],
+    en: ['Restaurant and bar', 'Breakfast, lunch, dinner and cocktails.'],
+  },
+  {
+    icono: 'ph:bell',
+    es: ['Servicio a la habitación', 'Sin salir de su cuarto.'],
+    en: ['Room service', 'Without leaving your room.'],
+  },
+  {
+    icono: 'ph:barbell',
+    es: ['Mini gimnasio', 'Al aire libre, con vista al desierto.'],
+    en: ['Outdoor gym', 'Open air, facing the desert.'],
+  },
+  {
+    icono: 'ph:paw-print',
+    es: ['Mascotas bienvenidas', 'Sin costo adicional, bajo petición.'],
+    en: ['Pets welcome', 'Free of charge, on request.'],
+  },
+  {
+    icono: 'ph:wheelchair',
+    es: ['Acceso para movilidad reducida', 'Instalaciones adaptadas.'],
+    en: ['Accessible facilities', 'Adapted for reduced mobility.'],
+  },
+];
 
 // ---------------------------------------------------------------------------
 // Restaurante
