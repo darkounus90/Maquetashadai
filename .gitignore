@@ -10,3 +10,6 @@ entrega/
 
 .DS_Store
 *.log
+
+# Generado por scripts/fotos.mjs en cada build.
+src/data/dimensiones.json

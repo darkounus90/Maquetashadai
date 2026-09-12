@@ -1,4 +1,6 @@
 ---
+import dimensiones from '../data/dimensiones.json';
+
 interface Props {
   id: string;
   alt: string;
@@ -8,14 +10,19 @@ interface Props {
   sizes?: string;
 }
 const { id, alt, class: clase = '', prioridad = false, sizes = '100vw' } = Astro.props;
+
+// Antes esto iba fijo en 1024x683 para todas. Es falso: los originales van de
+// 432x768 a 1024x768, y declarar una proporción que no es reserva el hueco
+// equivocado mientras carga. El tamaño real lo escribe scripts/fotos.mjs.
+const [ancho, alto] = (dimensiones as Record<string, [number, number]>)[id] ?? [1024, 683];
 ---
 
 <img
   src={`/img/fotos/${id}.webp`}
   alt={alt}
   sizes={sizes}
-  width="1024"
-  height="683"
+  width={ancho}
+  height={alto}
   loading={prioridad ? 'eager' : 'lazy'}
   decoding={prioridad ? 'sync' : 'async'}
   fetchpriority={prioridad ? 'high' : 'auto'}

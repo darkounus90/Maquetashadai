@@ -1,28 +1,44 @@
 ---
 import { useTranslations, ruta } from '../i18n/ui';
+import dimensiones from '../data/dimensiones.json';
 import type { Lang } from '../data/hotel';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const [ancho, alto] = (dimensiones as Record<string, [number, number]>)['f52-hero'] ?? [2048, 1152];
 ---
 
+<!--
+  Alto: 100svh solo desde `lg`. La foto es una arcada apaisada de 16:9; en un
+  móvil vertical, llenar la pantalla entera obliga a ampliarla 1,4x y recorta
+  el horizonte, con lo que no queda más que cielo estirado. A 80svh la foto
+  entra casi a tamaño nativo y se conserva la silueta del desierto, que es lo
+  que da la escala.
+-->
 <section
   data-hero
-  class="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden bg-deep"
+  class="relative isolate flex min-h-[80svh] flex-col justify-end overflow-hidden bg-deep lg:min-h-[100svh]"
 >
-  <!-- La Vía Láctea sobre el Desierto de la Tatacoa, vista desde la azotea -->
+  <!-- La Vía Láctea sobre el Desierto de la Tatacoa, vista desde la azotea.
+       Archivo aparte, al doble de ancho: ver scripts/fotos.mjs. -->
   <img
-    src="/img/fotos/f52.webp"
+    src="/img/fotos/f52-hero.webp"
     alt={lang === 'es'
       ? 'La Vía Láctea sobre el Desierto de la Tatacoa, vista desde el hotel'
       : 'The Milky Way over the Tatacoa Desert, seen from the hotel'}
-    width="1024"
-    height="683"
+    width={ancho}
+    height={alto}
     fetchpriority="high"
     decoding="sync"
-    class="absolute inset-0 -z-10 h-full w-full object-cover"
+    class="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_35%]"
   />
+
+  <!-- Grano fino. Una foto ampliada pierde el ruido del sensor y los degradados
+       del cielo se vuelven planos y con bandas; el grano se los devuelve. -->
+  <div class="grano absolute inset-0 -z-10" aria-hidden="true"></div>
+
   <!-- Velo inferior: solo lo necesario para que el texto pase contraste AA -->
   <div
     class="absolute inset-x-0 bottom-0 -z-10 h-[70%] bg-gradient-to-t from-deep via-deep/75 to-transparent"
@@ -49,3 +65,23 @@ const t = useTranslations(lang);
     </div>
   </div>
 </section>
+
+<style>
+  /* Ruido generado con feTurbulence, en un data URI: sin peticiones extra y
+     sin archivo que mantener. Se multiplica en overlay para que oscurezca las
+     zonas claras y aclare las oscuras, que es como se comporta el grano real. */
+  .grano {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23r)'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+    mix-blend-mode: overlay;
+    opacity: 0.13;
+  }
+
+  /* En pantallas densas el grano de 1x se ve como manchas: se afina. */
+  @media (min-resolution: 2dppx) {
+    .grano {
+      background-size: 100px 100px;
+      opacity: 0.1;
+    }
+  }
+</style>
