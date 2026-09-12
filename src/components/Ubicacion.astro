@@ -11,24 +11,27 @@ const t = useTranslations(lang);
 
 const { lat, lng } = hotel.coords;
 
-// El recuadro se centra exactamente en el hotel: así el marcador propio que va
-// superpuesto cae en el centro geométrico de la placa y no hace falta el
-// marcador verde de OpenStreetMap, que no pega con la paleta.
-const bbox = `${lng - 0.02}%2C${lat - 0.014}%2C${lng + 0.02}%2C${lat + 0.014}`;
-const mapa = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik`;
-const maps = `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
+// Embebido de Google Maps sin clave de API. La etiqueta entre paréntesis es lo
+// que Google escribe junto al marcador, así el pin sale con el nombre del hotel
+// en vez de con las coordenadas en crudo.
+//
+// A diferencia del de OpenStreetMap, este mapa NO se filtra ni se recorta: las
+// condiciones de Google prohíben alterar u ocultar su logo y su atribución.
+const etiqueta = encodeURIComponent(hotel.nombreCompleto);
+const mapa =
+  `https://maps.google.com/maps?q=${lat},${lng}(${etiqueta})` +
+  `&z=14&hl=${lang}&output=embed`;
+const maps = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
 
 // Coordenadas en el formato de un plano, no en decimal crudo.
 const coordenadas =
   `${Math.abs(lat).toFixed(4)}° ${lat >= 0 ? 'N' : 'S'}  ` +
   `${Math.abs(lng).toFixed(4)}° ${lng >= 0 ? 'E' : lang === 'es' ? 'O' : 'W'}`;
 
-const esquinas = [
-  'left-3 top-3 border-l border-t',
-  'right-3 top-3 border-r border-t',
-  'left-3 bottom-3 border-b border-l',
-  'right-3 bottom-3 border-b border-r',
-];
+const activar = {
+  es: 'Toque para mover el mapa',
+  en: 'Tap to move the map',
+}[lang];
 ---
 
 <section class="bg-base py-24 lg:py-32">
@@ -56,8 +59,8 @@ const esquinas = [
       </dl>
     </div>
 
-    <!-- Placa cartográfica: cabecera con coordenadas, mapa oscurecido con
-         marcador propio, y pie con la atribución y la acción. -->
+    <!-- Placa: cabecera con coordenadas, mapa de Google tal cual lo sirve, y
+         pie con la acción. -->
     <figure class="revelar border border-line-2 bg-panel lg:col-span-7">
       <figcaption
         class="flex items-center justify-between gap-4 border-b border-line-2 px-4 py-3"
@@ -69,11 +72,11 @@ const esquinas = [
         <span class="rotulo hidden text-ink-3 sm:block">Villavieja · Huila</span>
       </figcaption>
 
-      <div class="relative aspect-[4/3] overflow-hidden bg-base-2 lg:aspect-[16/10]">
-        <!-- El iframe se desborda 3rem por lado: recorta los controles de zoom
-             y la barra de atribución de OSM (que se repone abajo) sin mover el
-             centro, que es lo que mantiene el marcador alineado.
-             Sin interacción: en móvil un mapa embebido secuestra el scroll. -->
+      <!-- Alto fijo en móvil, no proporción: por debajo de unos 300 px Google
+           esconde su propio logo y su atribución, que no se pueden omitir. Con
+           `aspect-ratio` y `min-height` juntos el ancho se calcula del alto y
+           la placa se sale de la pantalla. -->
+      <div id="placa-mapa" class="relative h-80 bg-base-2 lg:h-auto lg:aspect-[16/10]">
         <iframe
           src={mapa}
           title={lang === 'es'
@@ -81,49 +84,29 @@ const esquinas = [
             : 'Map showing the hotel location in Villavieja'}
           loading="lazy"
           referrerpolicy="no-referrer-when-downgrade"
-          class="mapa-placa pointer-events-none absolute -inset-12 h-[calc(100%+6rem)] w-[calc(100%+6rem)]"
-        ></iframe>
+          class="pointer-events-none absolute inset-0 h-full w-full"></iframe>
 
-        <!-- Vela el mapa hacia la paleta de la página. -->
-        <div class="pointer-events-none absolute inset-0 bg-brasa/[0.06]" aria-hidden="true"></div>
-
-        <!-- Marcas de registro, como un plano. -->
-        {
-          esquinas.map((pos) => (
-            <span
-              class={`pointer-events-none absolute h-4 w-4 border-ink/25 ${pos}`}
-              aria-hidden="true"
-            />
-          ))
-        }
-
-        <!-- Marcador propio, en el centro exacto del recuadro. -->
-        <div
-          class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          aria-hidden="true"
+        <!-- Un mapa embebido secuestra el scroll: en móvil el dedo intenta
+             bajar por la página y termina arrastrando el mapa. Queda inerte
+             hasta que se toca a propósito. La capa es transparente para no
+             tapar el logo ni la atribución de Google. -->
+        <button
+          type="button"
+          id="activar-mapa"
+          class="group absolute inset-0 flex items-start justify-center pt-4"
+          aria-label={activar}
         >
           <span
-            class="absolute left-1/2 top-1/2 h-14 w-14 -translate-x-1/2 -translate-y-1/2 animate-ping border border-brasa-2/50 motion-reduce:animate-none"
-          ></span>
-          <span
-            class="absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2 border border-brasa-2/60 bg-brasa/15"
-          ></span>
-          <span
-            class="absolute left-1/2 top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 bg-brasa ring-2 ring-ink"
-          ></span>
-        </div>
+            class="border border-line-2 bg-deep/85 px-4 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.13em] text-ink backdrop-blur transition-colors group-hover:border-ink"
+          >
+            {activar}
+          </span>
+        </button>
       </div>
 
-      <div
-        class="flex items-center justify-between gap-4 border-t border-line-2 px-4 py-3"
-      >
-        <span class="text-[0.6875rem] leading-tight text-ink-3">
-          © <a
-            href="https://www.openstreetmap.org/copyright"
-            target="_blank"
-            rel="noopener"
-            class="underline decoration-line-2 underline-offset-2 transition-colors hover:text-ink-2">OpenStreetMap</a
-          >
+      <div class="flex items-center justify-between gap-4 border-t border-line-2 px-4 py-3">
+        <span class="truncate text-[0.6875rem] leading-tight text-ink-3">
+          {hotel.nombreCompleto}
         </span>
         <a
           href={maps}
@@ -142,11 +125,14 @@ const esquinas = [
   </div>
 </section>
 
-<style>
-  /* OpenStreetMap solo sirve teselas claras. Se invierten y se giran 180° en
-     el matiz para que el agua siga siendo azul y el verde siga siendo verde,
-     y se baja la saturación para que el mapa no compita con el acento. */
-  .mapa-placa {
-    filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92) saturate(0.5);
-  }
-</style>
+<script is:inline>
+  (() => {
+    const capa = document.getElementById('activar-mapa');
+    const marco = document.getElementById('placa-mapa')?.querySelector('iframe');
+    if (!capa || !marco) return;
+    capa.addEventListener('click', () => {
+      marco.classList.remove('pointer-events-none');
+      capa.remove();
+    });
+  })();
+</script>
