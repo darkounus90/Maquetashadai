@@ -13,10 +13,22 @@ export const hotel = {
   } as T,
   estrellas: 4,
   rnt: '232614',
+  // Datos verificados contra el sitio del hotel y su ficha de Booking.
+  // OJO: su web publica dos números distintos. La portada llama y escribe al
+  // 312 555 0814, que es el que también aparece en Booking y Hotels.com; la
+  // página de contacto usa el 321 754 9791. Hay que confirmar cuál es el bueno.
   tel: '+573125550814',
   telVisible: '+57 312 555 0814',
-  whatsapp: '573125550814',
-  email: 'reservas@elshaddaipuntadeleste.com',
+  whatsapp: '573217549791',
+  // Es un Gmail personal, el que publican hoy. Se mantiene para no inventar un
+  // buzón que no existe; crear reservas@ es una de las mejoras a proponer.
+  email: 'inesstorrescastrillon@gmail.com',
+  redes: {
+    // Su web enlaza a instagram.com/hotel.shaddai, que es OTRO hotel, en
+    // Filandia, Quindío. El suyo es este.
+    instagram: 'https://www.instagram.com/el_shaddai_punta_del_este/',
+    facebook: 'https://www.facebook.com/ElShaddaiPuntaDelEste',
+  },
   direccion: 'Km 1 Vía Desierto de la Tatacoa, Villavieja, Huila, Colombia',
   codigoPostal: '411027',
   coords: { lat: 3.2205, lng: -75.2156 },

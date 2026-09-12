@@ -98,6 +98,27 @@ const waMsg = encodeURIComponent(
         <Icon name="ph:whatsapp-logo" class="h-4 w-4" />
         WhatsApp
       </a>
+
+      <ul class="mt-6 flex items-center gap-3">
+        {
+          [
+            ['ph:instagram-logo', hotel.redes.instagram, 'Instagram'],
+            ['ph:facebook-logo', hotel.redes.facebook, 'Facebook'],
+          ].map(([icono, url, nombre]) => (
+            <li>
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener"
+                aria-label={nombre}
+                class="grid h-9 w-9 place-items-center border border-line-2 opacity-70 transition-all hover:border-ink hover:opacity-100"
+              >
+                <Icon name={icono} class="h-[1.125rem] w-[1.125rem]" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
     </div>
   </div>
 
