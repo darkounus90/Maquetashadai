@@ -3,6 +3,7 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import AvisoDemo from '../components/AvisoDemo.astro';
+import BarraMovil from '../components/BarraMovil.astro';
 import { hotel, habitaciones } from '../data/hotel';
 import type { Lang } from '../data/hotel';
 
@@ -14,14 +15,30 @@ interface Props {
   /** Ruta canónica sin prefijo de idioma, p. ej. "/habitaciones" */
   path?: string;
   oscuro?: boolean;
+  /** Nodos JSON-LD propios de la página, además del bloque Hotel. */
+  schemaExtra?: Record<string, unknown>[];
 }
 
-const { lang, title, description, ogImage = '/img/fotos/f52.webp', path = '/', oscuro = false } = Astro.props;
+const {
+  lang,
+  title,
+  description,
+  ogImage = '/img/fotos/f52.webp',
+  path = '/',
+  oscuro = false,
+  schemaExtra = [],
+} = Astro.props;
 
-const site = Astro.site?.origin ?? 'https://elshaddaipuntadeleste.com';
-const rutaEs = path === '/' ? '/' : path;
-const rutaEn = path === '/' ? '/en/' : `/en${path}`;
-const canonical = lang === 'es' ? site + rutaEs : site + rutaEn;
+const site = (Astro.site?.origin ?? 'https://elshaddaipuntadeleste.com').replace(/\/+$/, '');
+
+// Con barra final, igual que las URL del sitemap. Si el canonical dice
+// /habitaciones y el sitemap /habitaciones/, Google las evalúa como dos
+// candidatas distintas para la misma página.
+const conBarra = (p: string) => (p.endsWith('/') ? p : p + '/');
+const rutaEs = conBarra(path);
+const rutaEn = path === '/' ? '/en/' : conBarra(`/en${path}`);
+const canonical = site + (lang === 'es' ? rutaEs : rutaEn);
+const ogImagenAbs = ogImage.startsWith('http') ? ogImage : site + ogImage;
 
 const precioMin = Math.min(...habitaciones.map((h) => h.precios.baja));
 const precioMax = Math.max(...habitaciones.map((h) => h.precios.alta));
@@ -29,6 +46,10 @@ const precioMax = Math.max(...habitaciones.map((h) => h.precios.alta));
 const schema = {
   '@context': 'https://schema.org',
   '@type': 'Hotel',
+  // Un solo identificador para el hotel en todo el sitio: las páginas que
+  // añaden su propio nodo (restaurante, habitación) apuntan aquí en vez de
+  // describir un negocio distinto.
+  '@id': `${site}/#hotel`,
   name: 'El Shaddai Punta del Este',
   alternateName: 'EL SHADDAI Punta Del Este Desierto de la Tatacoa',
   description,
@@ -100,9 +121,15 @@ const schema = {
     <meta property="og:site_name" content="El Shaddai Punta del Este" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={site + ogImage} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImagenAbs} />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:locale" content={lang === 'es' ? 'es_CO' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_CO'} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImagenAbs} />
 
     <!-- MAQUETA: esta es una copia de demostración con precios de referencia.
          No debe indexarse: sería contenido duplicado contra el sitio real del
@@ -111,6 +138,8 @@ const schema = {
 
     <meta name="theme-color" content="#101315" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="sitemap" href="/sitemap-index.xml" />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -121,6 +150,11 @@ const schema = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+    {
+      schemaExtra.map((nodo) => (
+        <script type="application/ld+json" set:html={JSON.stringify(nodo)} is:inline />
+      ))
+    }
   </head>
 
   <body>
@@ -131,7 +165,6 @@ const schema = {
       {lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}
     </a>
 
-    <AvisoDemo lang={lang} />
     <Header lang={lang} path={path} />
 
     <main id="contenido">
@@ -139,6 +172,93 @@ const schema = {
     </main>
 
     <Footer lang={lang} />
+
+    <div id="pila-pie" class="fixed inset-x-0 bottom-0 z-[70] print:hidden">
+      <AvisoDemo lang={lang} />
+      <BarraMovil lang={lang} />
+    </div>
+
+    <script is:inline>
+      // Compartir: la hoja nativa del sistema donde exista, copiar el enlace
+      // donde no. El enlace que se comparte es el canónico, no location.href,
+      // para no propagar parámetros de campaña ni el ancla en la que se esté.
+      (() => {
+        const botones = document.querySelectorAll('[data-compartir]');
+        if (!botones.length) return;
+
+        const avisar = (btn) => {
+          const texto = btn.querySelector('[data-compartir-texto]');
+          const previo = texto ? texto.textContent : btn.getAttribute('aria-label');
+          const copiado = btn.dataset.copiado;
+          if (texto) texto.textContent = copiado;
+          else btn.setAttribute('aria-label', copiado);
+          btn.classList.add('text-brasa-luz', 'opacity-100');
+          setTimeout(() => {
+            if (texto) texto.textContent = previo;
+            else btn.setAttribute('aria-label', previo);
+            btn.classList.remove('text-brasa-luz', 'opacity-100');
+          }, 1800);
+        };
+
+        botones.forEach((btn) =>
+          btn.addEventListener('click', async () => {
+            const datos = {
+              title: document.title,
+              text: document.querySelector('meta[name="description"]')?.content ?? '',
+              url: document.querySelector('link[rel="canonical"]')?.href ?? location.href,
+            };
+            try {
+              if (navigator.share) {
+                await navigator.share(datos);
+                return;
+              }
+            } catch (e) {
+              // Cancelar la hoja de compartir no es un error que atender.
+              if (e && e.name === 'AbortError') return;
+            }
+            if (await copiar(datos.url)) avisar(btn);
+          })
+        );
+
+        // El portapapeles moderno exige contexto seguro y permiso, y puede
+        // negarse sin avisar. Si falla se intenta el método viejo antes de
+        // dejar al usuario sin respuesta.
+        async function copiar(url) {
+          try {
+            await navigator.clipboard.writeText(url);
+            return true;
+          } catch (e) {}
+          try {
+            const campo = document.createElement('textarea');
+            campo.value = url;
+            campo.setAttribute('readonly', '');
+            campo.style.cssText = 'position:fixed;top:0;left:-9999px';
+            document.body.appendChild(campo);
+            campo.select();
+            const ok = document.execCommand('copy');
+            campo.remove();
+            return ok;
+          } catch (e) {
+            return false;
+          }
+        }
+      })();
+
+      // La pila fija del pie cambia de alto: la barra de acción solo existe en
+      // móvil y el aviso de maqueta se puede cerrar. En vez de reservar un alto
+      // a ojo, se mide y se traslada a un relleno del body, así el final del pie
+      // nunca queda debajo.
+      (() => {
+        const pila = document.getElementById('pila-pie');
+        if (!pila) return;
+        const ajustar = () => {
+          document.body.style.paddingBottom = pila.offsetHeight + 'px';
+        };
+        ajustar();
+        if ('ResizeObserver' in window) new ResizeObserver(ajustar).observe(pila);
+        else addEventListener('resize', ajustar);
+      })();
+    </script>
 
     <script is:inline>
       // Revelado progresivo al hacer scroll.

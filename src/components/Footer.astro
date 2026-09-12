@@ -111,6 +111,15 @@ const waMsg = encodeURIComponent(
         <a href={ruta(lang, '/terminos')} class="transition-opacity hover:opacity-100">
           {t('foot.terminos')}
         </a>
+        <button
+          type="button"
+          data-compartir
+          data-copiado={lang === 'es' ? 'Enlace copiado' : 'Link copied'}
+          class="flex items-center gap-2 transition-opacity hover:opacity-100"
+        >
+          <Icon name="ph:share-network" class="h-4 w-4" />
+          <span data-compartir-texto>{lang === 'es' ? 'Compartir' : 'Share'}</span>
+        </button>
       </p>
     </div>
   </div>

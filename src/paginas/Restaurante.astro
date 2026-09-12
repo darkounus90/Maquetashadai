@@ -17,13 +17,13 @@ const meta = {
   es: {
     title: 'Restaurante | El Shaddai Punta del Este, Desierto de la Tatacoa',
     description:
-      'Conejo al gratín, especialidad de la casa desde hace cincuenta años. Cocina colombiana y uruguaya, terraza con BBQ para 50 personas y comedor privado para 35, en Villavieja, Huila.',
+      'Conejo al gratín, la especialidad de la casa desde hace cincuenta años. Cocina colombiana y uruguaya, terraza con BBQ y comedor privado en Villavieja.',
     titulo: 'Cincuenta años haciendo el mismo plato',
   },
   en: {
     title: 'Restaurant | El Shaddai Punta del Este, Tatacoa Desert',
     description:
-      'Rabbit au gratin, the house specialty for fifty years. Colombian and Uruguayan cooking, a BBQ terrace for 50 and a private dining room for 35, in Villavieja, Huila.',
+      'Rabbit au gratin, the house specialty for fifty years. Colombian and Uruguayan cooking, a BBQ terrace and a private dining room in Villavieja.',
     titulo: 'Fifty years making the same dish',
   },
 };
@@ -34,6 +34,45 @@ const waMsg = encodeURIComponent(
     ? 'Hola, quiero reservar una mesa en el restaurante.'
     : 'Hello, I would like to book a table at the restaurant.'
 );
+
+// El restaurante es una entidad propia dentro del hotel, no el hotel otra vez.
+// Sin `openingHours`: los horarios reales todavía no los tenemos y un horario
+// inventado en datos estructurados manda gente a una puerta cerrada.
+// Los precios de la carta tampoco van: hoy son estimaciones de la maqueta.
+// Al confirmarlos con el hotel se añaden como `offers` en cada `MenuItem`.
+const site = (Astro.site?.origin ?? 'https://elshaddaipuntadeleste.com').replace(/\/+$/, '');
+const schemaRestaurante = {
+  '@context': 'https://schema.org',
+  '@type': 'Restaurant',
+  '@id': `${site}/#restaurante`,
+  name: 'Restaurante El Shaddai Punta del Este',
+  description: restaurante.intro[lang],
+  servesCuisine: lang === 'es' ? ['Colombiana', 'Uruguaya'] : ['Colombian', 'Uruguayan'],
+  acceptsReservations: true,
+  currenciesAccepted: 'COP',
+  image: `${site}/img/fotos/f20.webp`,
+  isPartOf: { '@id': `${site}/#hotel` },
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Km 1 Vía Desierto de la Tatacoa',
+    addressLocality: 'Villavieja',
+    addressRegion: 'Huila',
+    postalCode: hotel.codigoPostal,
+    addressCountry: 'CO',
+  },
+  hasMenu: {
+    '@type': 'Menu',
+    hasMenuSection: restaurante.menu[lang].map((s) => ({
+      '@type': 'MenuSection',
+      name: s.seccion,
+      hasMenuItem: s.platos.map(([nombre, desc]) => ({
+        '@type': 'MenuItem',
+        name: nombre,
+        description: desc,
+      })),
+    })),
+  },
+};
 
 const espacios = {
   es: [
@@ -49,7 +88,14 @@ const espacios = {
 };
 ---
 
-<Base lang={lang} title={m.title} description={m.description} path="/restaurante" ogImage="/img/fotos/f20.webp">
+<Base
+  lang={lang}
+  title={m.title}
+  description={m.description}
+  path="/restaurante"
+  ogImage="/img/fotos/f20.webp"
+  schemaExtra={[schemaRestaurante]}
+>
   <Encabezado
     titulo={m.titulo}
     bajada={restaurante.intro[lang]}

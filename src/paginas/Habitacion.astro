@@ -24,6 +24,49 @@ const title =
 const description = `${hab.resumen[lang]} ${hab.camas[lang]}. ${
   lang === 'es' ? 'Desde' : 'From'
 } ${cop(hab.precios.baja, lang)} ${lang === 'es' ? 'la noche, desayuno incluido.' : 'per night, breakfast included.'}`;
+
+const site = (Astro.site?.origin ?? 'https://elshaddaipuntadeleste.com').replace(/\/+$/, '');
+const prefijo = lang === 'es' ? '' : '/en';
+const urlHab = `${site}${prefijo}/habitaciones/${hab.slug}/`;
+
+const schemaHabitacion = {
+  '@context': 'https://schema.org',
+  '@type': 'HotelRoom',
+  '@id': `${urlHab}#habitacion`,
+  name: hab.nombre[lang],
+  description: hab.descripcion[lang],
+  url: urlHab,
+  image: hab.fotos.slice(0, 3).map((f) => `${site}/img/fotos/${f}.webp`),
+  bed: hab.camas[lang],
+  occupancy: { '@type': 'QuantitativeValue', maxValue: hab.capacidad, unitCode: 'C62' },
+  floorSize: { '@type': 'QuantitativeValue', value: hab.m2, unitCode: 'MTK' },
+  containedInPlace: { '@id': `${site}/#hotel` },
+  // El precio declarado es el de temporada baja, que es el "desde" que se ve
+  // en la página. El total real lo calcula el motor noche a noche.
+  offers: {
+    '@type': 'Offer',
+    price: hab.precios.baja,
+    priceCurrency: 'COP',
+    availability: 'https://schema.org/InStock',
+    url: `${site}${prefijo}/reservar/`,
+  },
+};
+
+// Refleja la miga de pan que ya está visible arriba de la ficha.
+const schemaMiga = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: t('nav.inicio'), item: `${site}${prefijo}/` },
+    {
+      '@type': 'ListItem',
+      position: 2,
+      name: t('nav.habitaciones'),
+      item: `${site}${prefijo}/habitaciones/`,
+    },
+    { '@type': 'ListItem', position: 3, name: hab.nombre[lang], item: urlHab },
+  ],
+};
 ---
 
 <Base
@@ -32,6 +75,7 @@ const description = `${hab.resumen[lang]} ${hab.camas[lang]}. ${
   description={description}
   path={`/habitaciones/${hab.slug}`}
   ogImage={`/img/fotos/${hab.fotos[0]}.webp`}
+  schemaExtra={[schemaHabitacion, schemaMiga]}
 >
   <div class="pt-24 lg:pt-28">
     <!-- Mosaico de fotos -->

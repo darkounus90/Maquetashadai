@@ -1,0 +1,56 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations, ruta } from '../i18n/ui';
+import { hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Este hotel cierra reservas por WhatsApp. En móvil eso no puede estar a tres
+// scrolls de distancia: va fijo abajo, junto al motor de reservas.
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, vengo de la página web y quiero información sobre una reserva.'
+    : 'Hello, I found you on your website and would like information about a booking.'
+);
+
+const etiquetas = {
+  es: { wa: 'WhatsApp', reservar: 'Reservar', compartir: 'Compartir', copiado: 'Enlace copiado' },
+  en: { wa: 'WhatsApp', reservar: 'Book', compartir: 'Share', copiado: 'Link copied' },
+}[lang];
+---
+
+<div
+  class="grid grid-cols-[auto_1fr_1fr] items-stretch border-t border-line-2 bg-deep/95 backdrop-blur lg:hidden"
+  style="padding-bottom:env(safe-area-inset-bottom)"
+>
+  <button
+    type="button"
+    data-compartir
+    data-copiado={etiquetas.copiado}
+    class="flex items-center justify-center border-r border-line-2 px-4 text-ink transition-colors hover:text-brasa-luz"
+    aria-label={etiquetas.compartir}
+  >
+    <Icon name="ph:share-network" class="h-5 w-5" />
+  </button>
+
+  <a
+    href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`}
+    target="_blank"
+    rel="noopener"
+    class="flex items-center justify-center gap-2 border-r border-line-2 py-3.5 text-[0.8125rem] font-semibold text-ink"
+  >
+    <Icon name="ph:whatsapp-logo" class="h-[1.125rem] w-[1.125rem]" />
+    {etiquetas.wa}
+  </a>
+
+  <a
+    href={ruta(lang, '/reservar')}
+    class="flex items-center justify-center gap-2 bg-brasa py-3.5 text-[0.8125rem] font-semibold text-white"
+  >
+    <Icon name="ph:calendar-check" class="h-[1.125rem] w-[1.125rem]" />
+    {etiquetas.reservar}
+  </a>
+</div>
