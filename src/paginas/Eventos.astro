@@ -1,0 +1,177 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Foto from '../components/Foto.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { useTranslations } from '../i18n/ui';
+import { eventos, hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Eventos y celebraciones | El Shaddai Punta del Este, Tatacoa',
+    description:
+      'Matrimonios, grados, aniversarios, cumpleaños y reuniones empresariales en el Desierto de la Tatacoa. Terraza para 50 personas, comedor privado para 35 y azotea con cielo abierto.',
+  },
+  en: {
+    title: 'Events and celebrations | El Shaddai Punta del Este, Tatacoa',
+    description:
+      'Weddings, graduations, anniversaries, birthdays and corporate meetings in the Tatacoa Desert. A terrace for 50, a private dining room for 35 and an open-sky rooftop.',
+  },
+};
+
+const capacidades = {
+  es: [
+    ['50', 'personas en terraza al aire libre'],
+    ['35', 'personas en comedor privado'],
+    ['7', 'huéspedes en la habitación familiar'],
+    ['24 h', 'recepción y servicio a la habitación'],
+  ],
+  en: [
+    ['50', 'guests on the open-air terrace'],
+    ['35', 'guests in the private dining room'],
+    ['7', 'guests in the family room'],
+    ['24 h', 'reception and room service'],
+  ],
+};
+
+const asunto = lang === 'es' ? 'Cotización de evento' : 'Event quote';
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, quiero cotizar un evento en El Shaddai Punta del Este.'
+    : 'Hello, I would like a quote for an event at El Shaddai Punta del Este.'
+);
+---
+
+<Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/eventos" ogImage="/img/fotos/f17.webp">
+  <Encabezado
+    titulo={t('ev.titulo')}
+    bajada={t('ev.bajada')}
+    foto="f17"
+    alt={lang === 'es' ? 'Pareja al atardecer en el desierto' : 'Couple at sunset in the desert'}
+  />
+
+  <!-- Capacidades -->
+  <section class="border-b border-line py-16 lg:py-20">
+    <div class="contenedor">
+      <dl class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          capacidades[lang].map(([n, desc], i) => (
+            <div class="revelar" style={`transition-delay:${i * 70}ms`}>
+              <dt class="font-display text-4xl font-light text-brasa-luz">{n}</dt>
+              <dd class="mt-2 text-sm leading-relaxed text-ink-2">{desc}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Tipos de evento -->
+  <section class="py-24 lg:py-32">
+    <div class="contenedor">
+      <ul class="grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+        {
+          eventos[lang].map(([nombre, desc, foto], i) => (
+            <li class="revelar group" style={`transition-delay:${(i % 4) * 70}ms`}>
+              <div class="overflow-hidden">
+                <div class="aspect-[4/5]">
+                  <Foto
+                    id={foto}
+                    alt={nombre}
+                    sizes="(min-width:1024px) 24vw, (min-width:640px) 45vw, 100vw"
+                    class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+                  />
+                </div>
+              </div>
+              <h2 class="mt-4 font-display text-lg font-normal">{nombre}</h2>
+              <p class="mt-1.5 text-sm leading-relaxed text-ink-2">{desc}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Formulario de cotización -->
+  <section class="bg-base-2 py-24 lg:py-32">
+    <div class="contenedor grid max-w-5xl gap-12 lg:grid-cols-2 lg:gap-16">
+      <div>
+        <h2 class="revelar font-display text-seccion font-light">{t('ev.cta')}</h2>
+        <p class="revelar mt-5 text-base leading-relaxed text-ink-2">
+          {
+            lang === 'es'
+              ? 'Cuéntenos qué celebra, para cuántas personas y en qué fecha. Le respondemos con una propuesta y un precio, sin compromiso.'
+              : 'Tell us what you are celebrating, for how many people and on what date. We will reply with a proposal and a price, with no commitment.'
+          }
+        </p>
+
+        <div class="revelar mt-8 space-y-3 text-sm">
+          <p>
+            <a href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`} rel="noopener" class="btn btn-claro">
+              {t('cta.whatsapp')}
+            </a>
+          </p>
+          <p class="text-ink-3">
+            {lang === 'es' ? 'O llámenos al' : 'Or call us at'}
+            <a href={`tel:${hotel.tel}`} class="ml-1 underline underline-offset-2 hover:text-ink">
+              {hotel.telVisible}
+            </a>
+          </p>
+        </div>
+      </div>
+
+      <form
+        class="revelar border border-line bg-panel p-6 sm:p-8"
+        action={`mailto:${hotel.email}`}
+        method="post"
+        enctype="text/plain"
+      >
+        <div class="space-y-5">
+          <div>
+            <label class="etiqueta" for="e-nombre">{t('res.nombre')}</label>
+            <input class="campo" type="text" id="e-nombre" name="nombre" required />
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="etiqueta" for="e-correo">{t('res.correo')}</label>
+              <input class="campo" type="email" id="e-correo" name="correo" required />
+            </div>
+            <div>
+              <label class="etiqueta" for="e-tel">{t('res.telefono')}</label>
+              <input class="campo" type="tel" id="e-tel" name="telefono" required />
+            </div>
+          </div>
+          <div class="grid gap-5 sm:grid-cols-2">
+            <div>
+              <label class="etiqueta" for="e-tipo">{lang === 'es' ? 'Tipo de evento' : 'Event type'}</label>
+              <select class="campo" id="e-tipo" name="tipo">
+                {eventos[lang].map(([nombre]) => <option value={nombre}>{nombre}</option>)}
+              </select>
+            </div>
+            <div>
+              <label class="etiqueta" for="e-personas">{lang === 'es' ? 'Personas' : 'Guests'}</label>
+              <input class="campo" type="number" id="e-personas" name="personas" min="2" max="60" value="20" />
+            </div>
+          </div>
+          <div>
+            <label class="etiqueta" for="e-fecha">{lang === 'es' ? 'Fecha tentativa' : 'Preferred date'}</label>
+            <input class="campo" type="date" id="e-fecha" name="fecha" />
+          </div>
+          <div>
+            <label class="etiqueta" for="e-mensaje">{t('con.mensaje')}</label>
+            <textarea class="campo" id="e-mensaje" name="mensaje" rows="4"></textarea>
+          </div>
+        </div>
+        <input type="hidden" name="asunto" value={asunto} />
+        <button type="submit" class="btn btn-claro mt-7 w-full">{t('con.enviar')}</button>
+      </form>
+    </div>
+  </section>
+
+  <CtaFinal lang={lang} />
+</Base>

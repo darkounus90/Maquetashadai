@@ -1,0 +1,121 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Lang } from '../data/hotel';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const et = {
+  es: { cerrar: 'Cerrar', anterior: 'Anterior', siguiente: 'Siguiente' },
+  en: { cerrar: 'Close', anterior: 'Previous', siguiente: 'Next' },
+}[lang];
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[80] hidden items-center justify-center bg-deep/90 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-label={lang === 'es' ? 'Visor de fotos' : 'Photo viewer'}
+>
+  <button
+    type="button"
+    data-lb="cerrar"
+    class="absolute right-4 top-4 z-10 grid h-12 w-12 place-items-center text-ink transition-colors hover:bg-panel/10"
+    aria-label={et.cerrar}
+  >
+    <Icon name="ph:x" class="h-6 w-6" />
+  </button>
+
+  <button
+    type="button"
+    data-lb="prev"
+    class="absolute left-2 z-10 grid h-12 w-12 place-items-center text-ink transition-colors hover:bg-panel/10 sm:left-6"
+    aria-label={et.anterior}
+  >
+    <Icon name="ph:caret-left" class="h-7 w-7" />
+  </button>
+
+  <button
+    type="button"
+    data-lb="next"
+    class="absolute right-2 z-10 grid h-12 w-12 place-items-center text-ink transition-colors hover:bg-panel/10 sm:right-6"
+    aria-label={et.siguiente}
+  >
+    <Icon name="ph:caret-right" class="h-7 w-7" />
+  </button>
+
+  <figure class="flex max-h-[88svh] w-full max-w-5xl flex-col items-center gap-4 px-14 sm:px-20">
+    <img id="lb-img" src="" alt="" class="max-h-[76svh] w-auto object-contain" />
+    <figcaption id="lb-pie" class="text-center text-sm text-ink-2"></figcaption>
+  </figure>
+</div>
+
+<script>
+  const caja = document.getElementById('lightbox');
+  const img = document.getElementById('lb-img') as HTMLImageElement | null;
+  const pie = document.getElementById('lb-pie');
+
+  if (caja && img && pie) {
+    let fotos: { src: string; alt: string }[] = [];
+    let i = 0;
+
+    const leer = () =>
+      [...document.querySelectorAll<HTMLElement>('[data-foto]')]
+        .filter((el) => el.offsetParent !== null)
+        .map((el) => ({ src: el.dataset.foto!, alt: el.dataset.alt ?? '' }));
+
+    const pintar = () => {
+      const f = fotos[i];
+      if (!f) return;
+      img.src = f.src;
+      img.alt = f.alt;
+      pie.textContent = `${f.alt}  (${i + 1} / ${fotos.length})`;
+    };
+
+    const abrir = (src: string) => {
+      fotos = leer();
+      i = Math.max(0, fotos.findIndex((f) => f.src === src));
+      pintar();
+      caja.classList.remove('hidden');
+      caja.classList.add('flex');
+      document.documentElement.style.overflow = 'hidden';
+      caja.querySelector<HTMLElement>('[data-lb="cerrar"]')?.focus();
+    };
+
+    const cerrar = () => {
+      caja.classList.add('hidden');
+      caja.classList.remove('flex');
+      document.documentElement.style.overflow = '';
+    };
+
+    const mover = (paso: number) => {
+      if (!fotos.length) return;
+      i = (i + paso + fotos.length) % fotos.length;
+      pintar();
+    };
+
+    document.addEventListener('click', (e) => {
+      const disparador = (e.target as HTMLElement).closest<HTMLElement>('[data-foto]');
+      if (disparador) {
+        e.preventDefault();
+        abrir(disparador.dataset.foto!);
+      }
+    });
+
+    caja.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      const accion = t.closest<HTMLElement>('[data-lb]')?.dataset.lb;
+      if (accion === 'cerrar') cerrar();
+      else if (accion === 'prev') mover(-1);
+      else if (accion === 'next') mover(1);
+      else if (t === caja || t.tagName === 'FIGURE') cerrar();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (caja.classList.contains('hidden')) return;
+      if (e.key === 'Escape') cerrar();
+      if (e.key === 'ArrowLeft') mover(-1);
+      if (e.key === 'ArrowRight') mover(1);
+    });
+  }
+</script>

@@ -1,0 +1,165 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Foto from '../components/Foto.astro';
+import Lightbox from '../components/Lightbox.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { useTranslations } from '../i18n/ui';
+import { restaurante, hotel } from '../data/hotel';
+import { cop } from '../lib/precios';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Restaurante | El Shaddai Punta del Este, Desierto de la Tatacoa',
+    description:
+      'Conejo al gratín, especialidad de la casa desde hace cincuenta años. Cocina colombiana y uruguaya, terraza con BBQ para 50 personas y comedor privado para 35, en Villavieja, Huila.',
+    titulo: 'Cincuenta años haciendo el mismo plato',
+  },
+  en: {
+    title: 'Restaurant | El Shaddai Punta del Este, Tatacoa Desert',
+    description:
+      'Rabbit au gratin, the house specialty for fifty years. Colombian and Uruguayan cooking, a BBQ terrace for 50 and a private dining room for 35, in Villavieja, Huila.',
+    titulo: 'Fifty years making the same dish',
+  },
+};
+const m = meta[lang];
+
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, quiero reservar una mesa en el restaurante.'
+    : 'Hello, I would like to book a table at the restaurant.'
+);
+
+const espacios = {
+  es: [
+    ['Terraza al aire libre', '50 personas, parasoles y BBQ', 'f09'],
+    ['Comedor principal', '35 personas, cubierto y con aire', 'f08'],
+    ['Cenas románticas', 'Mesa montada con decoración especial', 'f21'],
+  ],
+  en: [
+    ['Open-air terrace', '50 guests, shade and BBQ', 'f09'],
+    ['Main dining room', '35 guests, covered and cooled', 'f08'],
+    ['Romantic dinners', 'A table set with special decoration', 'f21'],
+  ],
+};
+---
+
+<Base lang={lang} title={m.title} description={m.description} path="/restaurante" ogImage="/img/fotos/f20.webp">
+  <Encabezado
+    titulo={m.titulo}
+    bajada={restaurante.intro[lang]}
+    foto="f20"
+    alt={lang === 'es' ? 'Plato principal del restaurante' : 'Main dish from the restaurant'}
+  />
+
+  <!-- Espacios -->
+  <section class="py-24 lg:py-32">
+    <div class="contenedor">
+      <ul class="grid gap-8 sm:grid-cols-3">
+        {
+          espacios[lang].map(([nombre, desc, foto], i) => (
+            <li class="revelar" style={`transition-delay:${i * 80}ms`}>
+              <button
+                type="button"
+                data-foto={`/img/fotos/${foto}.webp`}
+                data-alt={nombre}
+                class="group block w-full overflow-hidden"
+              >
+                <div class="aspect-[4/3]">
+                  <Foto
+                    id={foto}
+                    alt={nombre}
+                    sizes="(min-width:640px) 32vw, 100vw"
+                    class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                  />
+                </div>
+              </button>
+              <h2 class="mt-4 font-display text-lg font-normal">{nombre}</h2>
+              <p class="mt-1 text-sm text-ink-2">{desc}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Carta -->
+  <section class="bg-deep py-24 text-ink lg:py-32">
+    <div class="contenedor max-w-4xl">
+      <header class="revelar">
+        <h2 class="font-display text-titulo font-extrabold" style="font-variation-settings:'opsz' 72,'wdth' 90">
+          {lang === 'es' ? 'La carta' : 'The menu'}
+        </h2>
+      </header>
+
+      <div class="mt-16 space-y-14">
+        {
+          restaurante.menu[lang].map((sec) => (
+            <div class="revelar">
+              <h3 class="font-display text-xl font-normal text-brasa-luz">{sec.seccion}</h3>
+              <ul class="mt-6 divide-y divide-line border-t border-line">
+                {sec.platos.map(([nombre, desc, precio]) => (
+                  <li class="flex items-baseline justify-between gap-6 py-4">
+                    <div>
+                      <h4 class="font-display text-base font-normal">{nombre}</h4>
+                      <p class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</p>
+                    </div>
+                    <p class="shrink-0 font-display text-base text-ink">
+                      {(precio as number) === 0 ? t('rest.incluido') : cop(precio as number, lang)}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="revelar mt-14 text-xs text-ink-3">{t('rest.nota')}</p>
+
+      <div class="revelar mt-10 flex flex-wrap gap-3">
+        <a href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`} rel="noopener" class="btn btn-brasa">
+          {t('rest.reservarMesa')}
+        </a>
+        <a href={`tel:${hotel.tel}`} class="btn btn-sobre-foto">{hotel.telVisible}</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Galería del restaurante -->
+  <section class="py-24 lg:py-32">
+    <div class="contenedor">
+      <ul class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {
+          restaurante.fotos.map((f, i) => (
+            <li class="revelar" style={`transition-delay:${(i % 4) * 70}ms`}>
+              <button
+                type="button"
+                data-foto={`/img/fotos/${f}.webp`}
+                data-alt={lang === 'es' ? 'Restaurante El Shaddai' : 'El Shaddai restaurant'}
+                class="group block w-full overflow-hidden"
+              >
+                <div class="aspect-square">
+                  <Foto
+                    id={f}
+                    alt={lang === 'es' ? 'Restaurante El Shaddai' : 'El Shaddai restaurant'}
+                    sizes="(min-width:1024px) 24vw, 45vw"
+                    class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                  />
+                </div>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaFinal lang={lang} />
+  <Lightbox lang={lang} />
+</Base>

@@ -1,0 +1,52 @@
+---
+import { Icon } from 'astro-icon/components';
+import type { Lang } from '../data/hotel';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const texto = {
+  es: 'Maqueta de demostración. Las reservas no son reales y los precios son de referencia.',
+  en: 'Demonstration mockup. Bookings are not real and prices are indicative.',
+};
+const cerrar = { es: 'Ocultar aviso', en: 'Hide notice' };
+---
+
+<div
+  id="aviso-demo"
+  class="fixed bottom-0 inset-x-0 z-[70] hidden border-t border-brasa/40 bg-deep/90 text-ink backdrop-blur print:hidden"
+>
+  <div class="contenedor flex items-center justify-between gap-4 py-2.5">
+    <p class="flex items-center gap-2.5 text-[0.72rem] leading-snug opacity-90">
+      <span class="grid h-4 w-4 shrink-0 place-items-center bg-brasa text-[9px] font-bold text-deep">
+        i
+      </span>
+      {texto[lang]}
+    </p>
+    <button
+      type="button"
+      id="cerrar-aviso"
+      class="shrink-0 p-1.5 opacity-60 transition-opacity hover:opacity-100"
+      aria-label={cerrar[lang]}
+    >
+      <Icon name="ph:x" class="h-4 w-4" />
+    </button>
+  </div>
+</div>
+
+<script is:inline>
+  (() => {
+    const aviso = document.getElementById('aviso-demo');
+    if (!aviso) return;
+    let oculto = false;
+    try {
+      oculto = sessionStorage.getItem('aviso-demo') === 'oculto';
+    } catch (e) {}
+    if (!oculto) aviso.classList.remove('hidden');
+    document.getElementById('cerrar-aviso')?.addEventListener('click', () => {
+      aviso.classList.add('hidden');
+      try {
+        sessionStorage.setItem('aviso-demo', 'oculto');
+      } catch (e) {}
+    });
+  })();
+</script>

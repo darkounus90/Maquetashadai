@@ -1,0 +1,24 @@
+{
+  "name": "elshaddai-punta-del-este",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "fotos": "node scripts/fotos.mjs",
+    "dev": "node scripts/fotos.mjs && astro dev",
+    "build": "node scripts/fotos.mjs && astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@iconify-json/ph": "1.2.2",
+    "@tailwindcss/vite": "4.3.3",
+    "astro": "5.18.2",
+    "astro-icon": "1.2.0",
+    "sharp": "0.34.5",
+    "tailwindcss": "4.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

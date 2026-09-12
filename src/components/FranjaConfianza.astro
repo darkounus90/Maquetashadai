@@ -1,0 +1,48 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations } from '../i18n/ui';
+import { hotel } from '../data/hotel';
+import { dec } from '../lib/precios';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const datos = {
+  es: ['Desayuno incluido', 'Piscina y jacuzzi', 'Parqueadero gratis', 'Mascotas bienvenidas'],
+  en: ['Breakfast included', 'Pool and jacuzzi', 'Free parking', 'Pets welcome'],
+};
+---
+
+<section class="border-b border-line bg-base">
+  <div class="contenedor flex flex-col gap-7 py-7 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+    <div class="flex items-center gap-4">
+      <span class="bg-brasa px-3 py-2 font-display text-xl font-bold text-white">
+        {dec(hotel.rating, lang)}
+      </span>
+      <span class="leading-tight">
+        <span class="block text-sm font-semibold">{t('prueba.excepcional')}</span>
+        <span class="block text-xs text-ink-3">
+          {hotel.totalResenas} {t('prueba.resenas')}
+        </span>
+      </span>
+      <span class="ml-2 hidden gap-0.5 sm:flex" aria-label={`${hotel.estrellas} ${lang === 'es' ? 'estrellas' : 'stars'}`}>
+        {Array.from({ length: hotel.estrellas }).map(() => (
+          <Icon name="ph:star-fill" class="h-3 w-3 text-ink-3" />
+        ))}
+      </span>
+    </div>
+
+    <ul class="flex flex-wrap gap-x-7 gap-y-2 text-xs text-ink-2">
+      {
+        datos[lang].map((d) => (
+          <li class="flex items-center gap-2">
+            <Icon name="ph:check" class="h-3.5 w-3.5 shrink-0 text-brasa-luz" />
+            {d}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>

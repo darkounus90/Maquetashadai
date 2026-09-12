@@ -1,0 +1,60 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations } from '../i18n/ui';
+import { hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+import Titulo from './Titulo.astro';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const { lat, lng } = hotel.coords;
+const bbox = `${lng - 0.02}%2C${lat - 0.014}%2C${lng + 0.02}%2C${lat + 0.014}`;
+const mapa = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lng}`;
+const maps = `https://www.google.com/maps/search/?api=1&query=${lat}%2C${lng}`;
+---
+
+<section class="bg-base py-24 lg:py-32">
+  <div class="contenedor grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
+    <div class="lg:col-span-5">
+      <Titulo
+        titulo={t('ubi.titulo')}
+        bajada={t('ubi.bajada')}
+      />
+
+      <address class="revelar mt-8 text-sm not-italic leading-relaxed text-ink-2">
+        {hotel.direccion}
+      </address>
+
+      <dl class="revelar mt-8 divide-y divide-line border-y border-line">
+        {
+          hotel.distancias[lang].map(([lugar, dist]) => (
+            <div class="flex items-baseline justify-between gap-6 py-3.5">
+              <dt class="text-sm text-ink-2">{lugar}</dt>
+              <dd class="shrink-0 font-display text-sm text-brasa-luz">{dist}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <a href={maps} target="_blank" rel="noopener" class="btn btn-linea revelar mt-8">
+        {t('ubi.mapa')}
+        <Icon name="ph:arrow-up-right" class="h-4 w-4" />
+      </a>
+    </div>
+
+    <div class="revelar lg:col-span-7">
+      <div class="overflow-hidden border border-line bg-panel">
+        <iframe
+          src={mapa}
+          title={lang === 'es'
+            ? 'Mapa de la ubicación del hotel en Villavieja'
+            : 'Map showing the hotel location in Villavieja'}
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          class="aspect-[4/3] w-full lg:aspect-[16/11]"></iframe>
+      </div>
+    </div>
+  </div>
+</section>

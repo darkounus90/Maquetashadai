@@ -1,0 +1,117 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations, ruta } from '../i18n/ui';
+import { hotel, habitaciones } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+import Logo from './Logo.astro';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const anio = new Date().getFullYear();
+
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, vengo de la página web y quiero información sobre una reserva.'
+    : 'Hello, I found you on your website and would like information about a booking.'
+);
+---
+
+<footer class="bg-deep text-ink">
+  <div class="contenedor grid gap-12 py-20 lg:grid-cols-12 lg:gap-8 lg:py-24">
+    <div class="lg:col-span-4">
+      <Logo class="h-11 w-auto" claro />
+      <p class="mt-6 max-w-xs text-sm leading-relaxed opacity-65">
+        {hotel.descriptor[lang]}
+      </p>
+      <div class="mt-6 flex items-center gap-2">
+        <div class="flex gap-0.5" aria-hidden="true">
+          {Array.from({ length: hotel.estrellas }).map(() => (
+            <Icon name="ph:star-fill" class="h-3.5 w-3.5" />
+          ))}
+        </div>
+        <span class="text-xs uppercase tracking-widest opacity-55">
+          {hotel.estrellas} {lang === 'es' ? 'estrellas' : 'stars'}
+        </span>
+      </div>
+    </div>
+
+    <nav class="lg:col-span-2" aria-label={t('foot.explorar')}>
+      <h2 class="rotulo text-ink-3">{t('foot.explorar')}</h2>
+      <ul class="mt-5 space-y-3 text-sm">
+        {
+          [
+            ['nav.habitaciones', '/habitaciones'],
+            ['nav.restaurante', '/restaurante'],
+            ['nav.eventos', '/eventos'],
+            ['nav.galeria', '/galeria'],
+            ['nav.contacto', '/contacto'],
+          ].map(([k, to]) => (
+            <li>
+              <a href={ruta(lang, to)} class="opacity-70 transition-opacity hover:opacity-100">
+                {t(k as any)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav class="lg:col-span-3" aria-label={t('nav.habitaciones')}>
+      <h2 class="rotulo text-ink-3">{t('nav.habitaciones')}</h2>
+      <ul class="mt-5 space-y-3 text-sm">
+        {
+          habitaciones.map((h) => (
+            <li>
+              <a
+                href={ruta(lang, `/habitaciones/${h.slug}`)}
+                class="opacity-70 transition-opacity hover:opacity-100"
+              >
+                {h.nombre[lang]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="lg:col-span-3">
+      <h2 class="rotulo text-ink-3">{t('foot.contacto')}</h2>
+      <address class="mt-5 space-y-3 text-sm not-italic opacity-70">
+        <p>{hotel.direccion}</p>
+        <p>
+          <a href={`tel:${hotel.tel}`} class="transition-opacity hover:opacity-100">
+            {hotel.telVisible}
+          </a>
+        </p>
+        <p>
+          <a href={`mailto:${hotel.email}`} class="transition-opacity hover:opacity-100">
+            {hotel.email}
+          </a>
+        </p>
+      </address>
+      <a
+        href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`}
+        class="btn btn-sobre-foto mt-6 !py-2.5 text-xs"
+        rel="noopener"
+      >
+        <Icon name="ph:whatsapp-logo" class="h-4 w-4" />
+        WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <div class="border-t border-line">
+    <div
+      class="contenedor flex flex-col gap-4 py-6 text-xs opacity-55 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p>© {anio} El Shaddai Punta del Este. {t('foot.derechos')}</p>
+      <p class="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <span>{t('foot.rnt')} {hotel.rnt}</span>
+        <a href={ruta(lang, '/terminos')} class="transition-opacity hover:opacity-100">
+          {t('foot.terminos')}
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

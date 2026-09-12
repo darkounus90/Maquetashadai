@@ -1,0 +1,57 @@
+---
+import { useTranslations, ruta } from '../i18n/ui';
+import { cop } from '../lib/precios';
+import type { Habitacion, Lang } from '../data/hotel';
+import Foto from './Foto.astro';
+
+interface Props {
+  hab: Habitacion;
+  lang: Lang;
+  prioridad?: boolean;
+}
+const { hab, lang, prioridad = false } = Astro.props;
+const t = useTranslations(lang);
+const url = ruta(lang, `/habitaciones/${hab.slug}`);
+---
+
+<article class="revelar group flex flex-col">
+  <a href={url} class="relative block overflow-hidden bg-panel">
+    <div class="aspect-[4/5] sm:aspect-[3/4]">
+      <Foto
+        id={hab.fotos[0]}
+        alt={hab.nombre[lang]}
+        prioridad={prioridad}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
+      />
+    </div>
+    <div
+      class="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-deep/75 to-transparent"
+      aria-hidden="true"
+    >
+    </div>
+    <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-5 text-ink">
+      <span class="text-xs uppercase tracking-widest opacity-85">
+        {hab.capacidad} {hab.capacidad === 1 ? t('hab.persona') : t('hab.personas')}, {hab.m2} m²
+      </span>
+    </div>
+  </a>
+
+  <div class="mt-5 flex flex-1 flex-col">
+    <h3 class="font-display text-2xl font-normal">
+      <a href={url} class="transition-colors hover:text-brasa-luz">{hab.nombre[lang]}</a>
+    </h3>
+    <p class="mt-2.5 flex-1 text-sm leading-relaxed text-ink-2">{hab.resumen[lang]}</p>
+
+    <div class="mt-5 flex items-end justify-between gap-4 border-t border-line pt-5">
+      <p class="leading-tight">
+        <span class="block text-[0.65rem] uppercase tracking-widest text-ink-3">
+          {t('hab.desde')}
+        </span>
+        <span class="font-display text-xl">{cop(hab.precios.baja, lang)}</span>
+        <span class="text-xs text-ink-3"> / {t('hab.noche')}</span>
+      </p>
+      <a href={url} class="btn btn-linea !px-5 !py-2.5 text-xs">{t('hab.ver')}</a>
+    </div>
+  </div>
+</article>

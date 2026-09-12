@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Foto from '../components/Foto.astro';
+import Lightbox from '../components/Lightbox.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { useTranslations } from '../i18n/ui';
+import { galeria, categoriasGaleria } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Galería | El Shaddai Punta del Este, Desierto de la Tatacoa',
+    description:
+      'Fotos del hotel, las habitaciones con jacuzzi, la piscina, el restaurante y el Desierto de la Tatacoa de noche, con la Vía Láctea a simple vista.',
+  },
+  en: {
+    title: 'Gallery | El Shaddai Punta del Este, Tatacoa Desert',
+    description:
+      'Photos of the hotel, the rooms with jacuzzi, the pool, the restaurant and the Tatacoa Desert at night, with the Milky Way visible to the naked eye.',
+  },
+};
+---
+
+<Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/galeria" ogImage="/img/fotos/f52.webp">
+  <Encabezado
+    titulo={t('gal.titulo')}
+    bajada={t('gal.bajada')}
+    foto="f54"
+    alt={lang === 'es' ? 'Arcillas rojas del Desierto de la Tatacoa' : 'Red clay of the Tatacoa Desert'}
+  />
+
+  <section class="py-16 lg:py-24">
+    <div class="contenedor">
+      <!-- Filtros -->
+      <div class="flex flex-wrap gap-2" role="tablist" aria-label={t('gal.titulo')}>
+        {
+          categoriasGaleria.map((c, i) => (
+            <button
+              type="button"
+              role="tab"
+              data-filtro={c.id}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              class="filtro border px-4 py-2 text-xs transition-colors"
+            >
+              {c.nombre[lang]}
+            </button>
+          ))
+        }
+      </div>
+
+      <!-- Mosaico -->
+      <ul class="mt-10 columns-2 gap-4 lg:columns-3 [&>li]:mb-4">
+        {
+          galeria.map((g, i) => (
+            <li data-cat={g.cat} class="break-inside-avoid">
+              <button
+                type="button"
+                data-foto={`/img/fotos/${g.foto}.webp`}
+                data-alt={g.alt[lang]}
+                class="group block w-full overflow-hidden bg-panel"
+              >
+                <Foto
+                  id={g.foto}
+                  alt={g.alt[lang]}
+                  prioridad={i < 3}
+                  sizes="(min-width:1024px) 32vw, 48vw"
+                  class="!h-auto transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
+                />
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaFinal lang={lang} />
+  <Lightbox lang={lang} />
+</Base>
+
+<style>
+  .filtro {
+    border-color: var(--color-line-2);
+    color: color-mix(in srgb, var(--color-ink) 65%, transparent);
+  }
+  .filtro:hover {
+    border-color: var(--color-ink);
+    color: var(--color-ink);
+  }
+  .filtro[aria-selected='true'] {
+    background: var(--color-ink);
+    border-color: var(--color-ink);
+    color: var(--color-deep);
+  }
+</style>
+
+<script>
+  const botones = document.querySelectorAll<HTMLElement>('[data-filtro]');
+  const fotos = document.querySelectorAll<HTMLElement>('[data-cat]');
+
+  botones.forEach((b) => {
+    b.addEventListener('click', () => {
+      const cat = b.dataset.filtro!;
+      botones.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+      fotos.forEach((f) => {
+        f.style.display = cat === 'todo' || f.dataset.cat === cat ? '' : 'none';
+      });
+    });
+  });
+</script>

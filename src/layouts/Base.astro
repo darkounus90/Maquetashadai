@@ -1,0 +1,167 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AvisoDemo from '../components/AvisoDemo.astro';
+import { hotel, habitaciones } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  ogImage?: string;
+  /** Ruta canónica sin prefijo de idioma, p. ej. "/habitaciones" */
+  path?: string;
+  oscuro?: boolean;
+}
+
+const { lang, title, description, ogImage = '/img/fotos/f52.webp', path = '/', oscuro = false } = Astro.props;
+
+const site = Astro.site?.origin ?? 'https://elshaddaipuntadeleste.com';
+const rutaEs = path === '/' ? '/' : path;
+const rutaEn = path === '/' ? '/en/' : `/en${path}`;
+const canonical = lang === 'es' ? site + rutaEs : site + rutaEn;
+
+const precioMin = Math.min(...habitaciones.map((h) => h.precios.baja));
+const precioMax = Math.max(...habitaciones.map((h) => h.precios.alta));
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'Hotel',
+  name: 'El Shaddai Punta del Este',
+  alternateName: 'EL SHADDAI Punta Del Este Desierto de la Tatacoa',
+  description,
+  url: site,
+  telephone: hotel.tel,
+  email: hotel.email,
+  image: [`${site}/img/fotos/f52.webp`, `${site}/img/fotos/f31.webp`, `${site}/img/fotos/f20.webp`],
+  priceRange: `COP ${precioMin.toLocaleString('es-CO')} - ${precioMax.toLocaleString('es-CO')}`,
+  starRating: { '@type': 'Rating', ratingValue: hotel.estrellas },
+  checkinTime: hotel.checkIn,
+  checkoutTime: hotel.checkOut,
+  petsAllowed: true,
+  currenciesAccepted: 'COP',
+  paymentAccepted: 'Efectivo, Tarjeta débito, Tarjeta crédito',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Km 1 Vía Desierto de la Tatacoa',
+    addressLocality: 'Villavieja',
+    addressRegion: 'Huila',
+    postalCode: hotel.codigoPostal,
+    addressCountry: 'CO',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: hotel.coords.lat,
+    longitude: hotel.coords.lng,
+  },
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: hotel.rating,
+    bestRating: 10,
+    reviewCount: hotel.totalResenas,
+  },
+  amenityFeature: [
+    'Piscina',
+    'Jacuzzi',
+    'WiFi gratis',
+    'Parqueadero gratis',
+    'Aire acondicionado',
+    'Restaurante',
+    'Bar',
+    'Gimnasio',
+    'Servicio a la habitación',
+    'Recepción 24 horas',
+  ].map((n) => ({ '@type': 'LocationFeatureSpecification', name: n, value: true })),
+  makesOffer: habitaciones.map((h) => ({
+    '@type': 'Offer',
+    name: h.nombre[lang],
+    price: h.precios.baja,
+    priceCurrency: 'COP',
+    availability: 'https://schema.org/InStock',
+  })),
+};
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="es" href={site + rutaEs} />
+    <link rel="alternate" hreflang="en" href={site + rutaEn} />
+    <link rel="alternate" hreflang="x-default" href={site + rutaEs} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="El Shaddai Punta del Este" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={site + ogImage} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_CO' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- MAQUETA: esta es una copia de demostración con precios de referencia.
+         No debe indexarse: sería contenido duplicado contra el sitio real del
+         hotel. Quitar estas dos líneas al publicar en el dominio definitivo. -->
+    <meta name="robots" content="noindex, nofollow" />
+
+    <meta name="theme-color" content="#101315" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400;12..96,75..100,600;12..96,75..100,800&display=swap"
+    />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} is:inline />
+  </head>
+
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-brasa focus:px-5 focus:py-3 focus:text-sm focus:text-white"
+    >
+      {lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}
+    </a>
+
+    <AvisoDemo lang={lang} />
+    <Header lang={lang} path={path} />
+
+    <main id="contenido">
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+
+    <script is:inline>
+      // Revelado progresivo al hacer scroll.
+      (() => {
+        const items = document.querySelectorAll('.revelar');
+        if (!items.length) return;
+        if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          items.forEach((el) => el.classList.add('visible'));
+          return;
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.06 }
+        );
+        items.forEach((el) => io.observe(el));
+      })();
+    </script>
+  </body>
+</html>

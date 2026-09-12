@@ -1,0 +1,7 @@
+# Maqueta de demostración: no indexar.
+# Al publicar en elshaddaipuntadeleste.com, sustituir por:
+#   User-agent: *
+#   Allow: /
+#   Sitemap: https://elshaddaipuntadeleste.com/sitemap-index.xml
+User-agent: *
+Disallow: /

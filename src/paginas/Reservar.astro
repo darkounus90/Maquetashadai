@@ -1,0 +1,541 @@
+---
+import { Icon } from 'astro-icon/components';
+import Base from '../layouts/Base.astro';
+import { useTranslations, ruta, ui } from '../i18n/ui';
+import { habitaciones, hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Reservar | El Shaddai Punta del Este, Desierto de la Tatacoa',
+    description:
+      'Reserve directo con el hotel, sin comisiones de intermediarios. Elija fechas, habitación y confirme. Se paga al llegar, sin tarjeta de crédito.',
+  },
+  en: {
+    title: 'Book | El Shaddai Punta del Este, Tatacoa Desert',
+    description:
+      'Book direct with the hotel, with no agency commission. Choose your dates and room and confirm. Pay on arrival, no credit card needed.',
+  },
+};
+
+// Datos que necesita el motor de reservas en el navegador.
+const datos = {
+  lang,
+  whatsapp: hotel.whatsapp,
+  habitaciones: habitaciones.map((h) => ({
+    slug: h.slug,
+    nombre: h.nombre[lang],
+    resumen: h.resumen[lang],
+    camas: h.camas[lang],
+    m2: h.m2,
+    capacidad: h.capacidad,
+    foto: h.fotos[0],
+    precios: h.precios,
+    destacados: h.destacados[lang],
+  })),
+  txt: ui[lang],
+};
+
+const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
+---
+
+<Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/reservar">
+  <script type="application/json" id="datos-reserva" set:html={JSON.stringify(datos)} is:inline />
+
+  <div class="min-h-screen bg-base-2 pb-24 pt-32 lg:pt-40">
+    <div class="contenedor max-w-4xl">
+      <header class="text-center">
+        <h1 class="font-display text-titulo font-extrabold" style="font-variation-settings:'opsz' 72,'wdth' 90">
+          {t('res.titulo')}
+        </h1>
+      </header>
+
+      <!-- Indicador de pasos -->
+      <ol class="mt-12 flex items-center justify-center gap-2 sm:gap-4" aria-label={t('res.paso')}>
+        {
+          pasos.map((p, i) => (
+            <li class="flex items-center gap-2 sm:gap-4" data-indicador={i + 1}>
+              <span class="flex items-center gap-2.5">
+                <span
+                  class="grid h-8 w-8 shrink-0 place-items-center border text-xs font-medium transition-colors duration-300"
+                  data-circulo
+                >
+                  {i + 1}
+                </span>
+                <span class="hidden text-xs sm:block" data-etiqueta>
+                  {p}
+                </span>
+              </span>
+              {i < pasos.length - 1 && <span class="h-px w-4 bg-line sm:w-8" aria-hidden="true" />}
+            </li>
+          ))
+        }
+      </ol>
+
+      <!-- PASO 1 -->
+      <section data-paso="1" class="mt-12">
+        <div class="border border-line bg-panel p-6 sm:p-8">
+          <h2 class="font-display text-xl font-normal">{t('res.paso1')}</h2>
+          <div class="mt-6 grid gap-5 sm:grid-cols-3">
+            <div>
+              <label class="etiqueta" for="r-entrada">{t('buscador.entrada')}</label>
+              <input class="campo" type="date" id="r-entrada" />
+            </div>
+            <div>
+              <label class="etiqueta" for="r-salida">{t('buscador.salida')}</label>
+              <input class="campo" type="date" id="r-salida" />
+            </div>
+            <div>
+              <label class="etiqueta" for="r-huespedes">{t('buscador.huespedes')}</label>
+              <select class="campo" id="r-huespedes">
+                {
+                  [1, 2, 3, 4, 5, 6, 7].map((n) => (
+                    <option value={n} selected={n === 2}>
+                      {n} {n === 1 ? t('hab.persona') : t('hab.personas')}
+                    </option>
+                  ))
+                }
+              </select>
+            </div>
+          </div>
+
+          <p id="r-error-1" class="mt-4 hidden text-sm text-brasa-luz" role="alert"></p>
+
+          <div class="mt-8 flex justify-end">
+            <button type="button" class="btn btn-claro" data-ir="2">{t('res.continuar')}</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PASO 2 -->
+      <section data-paso="2" class="mt-12 hidden">
+        <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h2 class="font-display text-xl font-normal">{t('res.paso2')}</h2>
+          <p id="r-resumen-fechas" class="text-sm text-ink-2"></p>
+        </div>
+
+        <div id="r-habitaciones" class="space-y-5"></div>
+
+        <div class="mt-8 flex justify-between gap-4">
+          <button type="button" class="btn btn-linea" data-ir="1">{t('res.volver')}</button>
+        </div>
+      </section>
+
+      <!-- PASO 3 -->
+      <section data-paso="3" class="mt-12 hidden">
+        <div class="grid gap-6 lg:grid-cols-5">
+          <div class="lg:col-span-3">
+            <div class="border border-line bg-panel p-6 sm:p-8">
+              <h2 class="font-display text-xl font-normal">{t('res.paso3')}</h2>
+              <div class="mt-6 space-y-5">
+                <div>
+                  <label class="etiqueta" for="r-nombre">{t('res.nombre')}</label>
+                  <input class="campo" type="text" id="r-nombre" autocomplete="name" />
+                </div>
+                <div class="grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <label class="etiqueta" for="r-correo">{t('res.correo')}</label>
+                    <input class="campo" type="email" id="r-correo" autocomplete="email" />
+                  </div>
+                  <div>
+                    <label class="etiqueta" for="r-telefono">{t('res.telefono')}</label>
+                    <input class="campo" type="tel" id="r-telefono" autocomplete="tel" />
+                  </div>
+                </div>
+                <div>
+                  <label class="etiqueta" for="r-notas">{t('res.notas')}</label>
+                  <textarea class="campo" id="r-notas" rows="3" placeholder={t('res.notasPh')}></textarea>
+                </div>
+              </div>
+
+              <p id="r-error-3" class="mt-4 hidden text-sm text-brasa-luz" role="alert"></p>
+
+              <div class="mt-8 flex justify-between gap-4">
+                <button type="button" class="btn btn-linea" data-ir="2">{t('res.volver')}</button>
+                <button type="button" class="btn btn-claro" data-ir="4">{t('res.confirmar')}</button>
+              </div>
+            </div>
+          </div>
+
+          <aside class="lg:col-span-2">
+            <div id="r-resumen" class="border border-line bg-panel p-6"></div>
+          </aside>
+        </div>
+      </section>
+
+      <!-- PASO 4 -->
+      <section data-paso="4" class="mt-12 hidden">
+        <div class="border border-line bg-panel p-8 text-center sm:p-12">
+          <div class="mx-auto grid h-16 w-16 place-items-center bg-brasa">
+            <Icon name="ph:check" class="h-8 w-8 text-white" />
+          </div>
+          <h2 class="mt-6 font-display text-seccion font-bold">{t('res.listo')}</h2>
+          <p class="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-2">
+            {t('res.listoTexto')}
+          </p>
+
+          <p class="mt-6 inline-flex items-baseline gap-3 border border-line bg-base-2 px-5 py-2.5">
+            <span class="text-xs uppercase tracking-widest text-ink-3">{t('res.codigo')}</span>
+            <span id="r-codigo" class="font-display text-lg"></span>
+          </p>
+
+          <div id="r-confirmacion" class="mx-auto mt-10 max-w-md text-left"></div>
+
+          <div class="mt-10 flex flex-wrap justify-center gap-3">
+            <a id="r-wa" href="#" rel="noopener" class="btn btn-claro">{t('res.enviarWa')}</a>
+            <a href={ruta(lang, '/reservar')} class="btn btn-linea">{t('res.otra')}</a>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
+
+<style>
+  [data-indicador] [data-circulo] {
+    border-color: var(--color-line-2);
+    color: var(--color-ink-3);
+    background: var(--color-panel);
+  }
+  [data-indicador][data-estado='actual'] [data-circulo] {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-deep);
+  }
+  [data-indicador][data-estado='hecho'] [data-circulo] {
+    border-color: var(--color-brasa);
+    background: var(--color-brasa);
+    color: #fff;
+  }
+  [data-indicador] [data-etiqueta] {
+    color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+  }
+  [data-indicador][data-estado='actual'] [data-etiqueta] {
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  import { cop, cotizar, disponibles, totalNoches, codigoReserva, hoyISO, fechaLarga } from '../lib/precios';
+
+  type Hab = {
+    slug: string; nombre: string; resumen: string; camas: string; m2: number;
+    capacidad: number; foto: string; precios: Record<string, number>; destacados: string[];
+  };
+
+  const crudo = document.getElementById('datos-reserva')?.textContent;
+  if (crudo) {
+    const D = JSON.parse(crudo) as {
+      lang: 'es' | 'en';
+      whatsapp: string;
+      habitaciones: Hab[];
+      txt: Record<string, string>;
+    };
+    const T = (k: string) => D.txt[k] ?? k;
+
+    const estado = {
+      paso: 1,
+      entrada: '',
+      salida: '',
+      huespedes: 2,
+      slug: '',
+      codigo: '',
+    };
+
+    const $ = <E extends HTMLElement>(s: string) => document.querySelector<E>(s);
+    const entrada = $<HTMLInputElement>('#r-entrada')!;
+    const salida = $<HTMLInputElement>('#r-salida')!;
+    const huespedes = $<HTMLSelectElement>('#r-huespedes')!;
+
+    // --- Valores iniciales, desde la URL si vienen del buscador -------------
+    const q = new URLSearchParams(location.search);
+    entrada.min = hoyISO();
+    salida.min = hoyISO(1);
+    entrada.value = q.get('entrada') || hoyISO(14);
+    salida.value = q.get('salida') || hoyISO(16);
+    if (q.get('huespedes')) huespedes.value = q.get('huespedes')!;
+    const habPedida = q.get('habitacion');
+
+    entrada.addEventListener('change', () => {
+      const d = new Date(entrada.value + 'T12:00:00');
+      d.setDate(d.getDate() + 1);
+      const min = d.toISOString().slice(0, 10);
+      salida.min = min;
+      if (salida.value <= entrada.value) salida.value = min;
+    });
+
+    // --- Navegación entre pasos -------------------------------------------
+    function pintarIndicadores() {
+      document.querySelectorAll<HTMLElement>('[data-indicador]').forEach((el) => {
+        const n = Number(el.dataset.indicador);
+        el.dataset.estado = n === estado.paso ? 'actual' : n < estado.paso ? 'hecho' : 'pendiente';
+      });
+    }
+
+    function ir(n: number) {
+      estado.paso = n;
+      document.querySelectorAll<HTMLElement>('[data-paso]').forEach((s) => {
+        s.classList.toggle('hidden', Number(s.dataset.paso) !== n);
+      });
+      pintarIndicadores();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function error(id: string, msg: string | null) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = msg ?? '';
+      el.classList.toggle('hidden', !msg);
+    }
+
+    // --- Paso 2: habitaciones disponibles ---------------------------------
+    function pintarHabitaciones() {
+      const cont = document.getElementById('r-habitaciones');
+      if (!cont) return;
+      const noches = totalNoches(estado.entrada, estado.salida);
+
+      const resumen = document.getElementById('r-resumen-fechas');
+      if (resumen) {
+        resumen.textContent =
+          `${fechaLarga(estado.entrada, D.lang)} a ${fechaLarga(estado.salida, D.lang)}, ` +
+          `${noches} ${noches === 1 ? T('res.noche') : T('res.noches')}, ` +
+          `${estado.huespedes} ${estado.huespedes === 1 ? T('hab.persona') : T('hab.personas')}`;
+      }
+
+      const aptas = D.habitaciones.filter((h) => h.capacidad >= estado.huespedes);
+      if (!aptas.length) {
+        cont.innerHTML = `<p class="border border-line bg-panel p-6 text-sm text-ink-2">${T('res.sinResultados')}</p>`;
+        return;
+      }
+
+      cont.innerHTML = aptas
+        .map((h) => {
+          const c = cotizar(h.slug, estado.entrada, estado.salida);
+          const quedan = disponibles(h.slug, estado.entrada, estado.huespedes);
+          const agotada = quedan === 0;
+          const elegida = estado.slug === h.slug;
+
+          const avisoStock =
+            !agotada && quedan <= 2
+              ? `<span class="bg-brasa px-2.5 py-1 text-[0.7rem] font-semibold text-white">${
+                  D.lang === 'es' ? `Quedan ${quedan}` : `${quedan} left`
+                }</span>`
+              : '';
+
+          return `
+          <article class="overflow-hidden border ${
+            elegida ? 'border-ink' : 'border-line'
+          } bg-panel transition-colors">
+            <div class="grid sm:grid-cols-[minmax(0,14rem)_1fr]">
+              <div class="aspect-[4/3] sm:aspect-auto">
+                <img src="/img/fotos/${h.foto}.webp" alt="${h.nombre}" loading="lazy"
+                     class="h-full w-full object-cover ${agotada ? 'opacity-40 grayscale' : ''}" />
+              </div>
+              <div class="flex flex-col gap-4 p-5 sm:p-6">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h3 class="font-display text-lg">${h.nombre}</h3>
+                    <p class="mt-1 text-xs text-ink-3">${h.capacidad} ${
+                      h.capacidad === 1 ? T('hab.persona') : T('hab.personas')
+                    }, ${h.m2} m². ${h.camas}</p>
+                  </div>
+                  ${avisoStock}
+                </div>
+
+                <ul class="flex flex-wrap gap-1.5">
+                  ${h.destacados
+                    .map(
+                      (d) =>
+                        `<li class="border border-line px-2.5 py-1 text-[0.7rem] text-ink-2">${d}</li>`
+                    )
+                    .join('')}
+                </ul>
+
+                <div class="mt-auto flex flex-wrap items-end justify-between gap-4 border-t border-line pt-4">
+                  <div>
+                    ${
+                      agotada
+                        ? `<p class="text-sm text-ink-3">${T('res.agotada')}</p>`
+                        : `<p class="font-display text-xl">${cop(c.total, D.lang)}</p>
+                           <p class="text-xs text-ink-3">${noches} ${
+                             noches === 1 ? T('res.noche') : T('res.noches')
+                           }, ${T('res.impuestos').toLowerCase()}</p>`
+                    }
+                  </div>
+                  ${
+                    agotada
+                      ? ''
+                      : `<button type="button" data-elegir="${h.slug}" class="btn ${
+                          elegida ? 'btn-brasa' : 'btn-claro'
+                        } !px-5 !py-2.5 text-xs">${
+                          elegida ? T('res.seleccionada') : T('res.seleccionar')
+                        }</button>`
+                  }
+                </div>
+              </div>
+            </div>
+          </article>`;
+        })
+        .join('');
+    }
+
+    // --- Paso 3: resumen ---------------------------------------------------
+    function pintarResumen() {
+      const cont = document.getElementById('r-resumen');
+      const hab = D.habitaciones.find((h) => h.slug === estado.slug);
+      if (!cont || !hab) return;
+      const c = cotizar(hab.slug, estado.entrada, estado.salida);
+      const noches = c.noches.length;
+      const temporadas = c.temporadas
+        .map((tp) => T(`res.temporada`) + ' ' + (D.lang === 'es'
+          ? { baja: 'baja', media: 'media', alta: 'alta' }[tp]
+          : { baja: 'low', media: 'mid', alta: 'high' }[tp]))
+        .join(', ');
+
+      cont.innerHTML = `
+        <h3 class="font-display text-lg">${T('res.resumen')}</h3>
+        <div class="mt-4 overflow-hidden">
+          <img src="/img/fotos/${hab.foto}.webp" alt="${hab.nombre}" class="aspect-[16/10] w-full object-cover" />
+        </div>
+        <p class="mt-4 font-display text-base">${hab.nombre}</p>
+        <dl class="mt-4 space-y-2.5 border-t border-line pt-4 text-sm">
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${T('buscador.entrada')}</dt>
+            <dd class="text-right">${fechaLarga(estado.entrada, D.lang)}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${T('buscador.salida')}</dt>
+            <dd class="text-right">${fechaLarga(estado.salida, D.lang)}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${T('buscador.huespedes')}</dt>
+            <dd>${estado.huespedes}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${T('res.temporada')}</dt>
+            <dd class="text-right text-xs">${temporadas}</dd>
+          </div>
+        </dl>
+        <dl class="mt-4 space-y-2.5 border-t border-line pt-4 text-sm">
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${noches} ${noches === 1 ? T('res.noche') : T('res.noches')}</dt>
+            <dd>${cop(c.subtotal, D.lang)}</dd>
+          </div>
+          <div class="flex justify-between gap-4">
+            <dt class="text-ink-3">${T('res.impuestos')}</dt>
+            <dd>${cop(c.impuestos, D.lang)}</dd>
+          </div>
+          <div class="flex justify-between gap-4 border-t border-line pt-3 font-display text-lg">
+            <dt>${T('res.total')}</dt>
+            <dd>${cop(c.total, D.lang)}</dd>
+          </div>
+        </dl>
+        <p class="mt-4 text-xs leading-relaxed text-ink-3">${T('res.pagoHotel')}. ${T('res.sinTarjeta')}</p>`;
+    }
+
+    // --- Paso 4: confirmación ---------------------------------------------
+    function confirmar() {
+      const hab = D.habitaciones.find((h) => h.slug === estado.slug)!;
+      const c = cotizar(hab.slug, estado.entrada, estado.salida);
+      const nombre = $<HTMLInputElement>('#r-nombre')!.value.trim();
+      const correo = $<HTMLInputElement>('#r-correo')!.value.trim();
+      const tel = $<HTMLInputElement>('#r-telefono')!.value.trim();
+      const notas = $<HTMLTextAreaElement>('#r-notas')!.value.trim();
+
+      estado.codigo = codigoReserva();
+      const cod = document.getElementById('r-codigo');
+      if (cod) cod.textContent = estado.codigo;
+
+      const filas: [string, string][] = [
+        [T('res.nombre'), nombre],
+        [hab.nombre, `${estado.huespedes} ${estado.huespedes === 1 ? T('hab.persona') : T('hab.personas')}`],
+        [T('buscador.entrada'), fechaLarga(estado.entrada, D.lang)],
+        [T('buscador.salida'), fechaLarga(estado.salida, D.lang)],
+        [T('res.total'), cop(c.total, D.lang)],
+      ];
+
+      const caja = document.getElementById('r-confirmacion');
+      if (caja) {
+        caja.innerHTML = `<dl class="divide-y divide-line border border-line bg-base-2 px-5">
+          ${filas
+            .map(
+              ([k, v]) =>
+                `<div class="flex justify-between gap-4 py-3 text-sm"><dt class="text-ink-3">${k}</dt><dd class="text-right font-medium">${v}</dd></div>`
+            )
+            .join('')}
+        </dl>`;
+      }
+
+      const texto =
+        D.lang === 'es'
+          ? `Hola, confirmo mi reserva ${estado.codigo}.\n\n` +
+            `Nombre: ${nombre}\nCorreo: ${correo}\nTeléfono: ${tel}\n` +
+            `Habitación: ${hab.nombre}\nEntrada: ${estado.entrada}\nSalida: ${estado.salida}\n` +
+            `Huéspedes: ${estado.huespedes}\nTotal: ${cop(c.total, D.lang)}` +
+            (notas ? `\n\nPeticiones: ${notas}` : '')
+          : `Hello, confirming my booking ${estado.codigo}.\n\n` +
+            `Name: ${nombre}\nEmail: ${correo}\nPhone: ${tel}\n` +
+            `Room: ${hab.nombre}\nCheck-in: ${estado.entrada}\nCheck-out: ${estado.salida}\n` +
+            `Guests: ${estado.huespedes}\nTotal: ${cop(c.total, D.lang)}` +
+            (notas ? `\n\nRequests: ${notas}` : '');
+
+      const wa = document.getElementById('r-wa') as HTMLAnchorElement | null;
+      if (wa) wa.href = `https://wa.me/${D.whatsapp}?text=${encodeURIComponent(texto)}`;
+    }
+
+    // --- Validaciones y transiciones --------------------------------------
+    function intentar(destino: number) {
+      if (destino === 2) {
+        estado.entrada = entrada.value;
+        estado.salida = salida.value;
+        estado.huespedes = Number(huespedes.value);
+        if (!estado.entrada || !estado.salida) return error('r-error-1', T('res.faltanFechas'));
+        if (totalNoches(estado.entrada, estado.salida) < 1) return error('r-error-1', T('res.errorFechas'));
+        error('r-error-1', null);
+        if (habPedida && !estado.slug) estado.slug = habPedida;
+        pintarHabitaciones();
+        return ir(2);
+      }
+      if (destino === 3) {
+        if (!estado.slug) return;
+        pintarResumen();
+        return ir(3);
+      }
+      if (destino === 4) {
+        const ok =
+          $<HTMLInputElement>('#r-nombre')!.value.trim() &&
+          $<HTMLInputElement>('#r-correo')!.value.trim() &&
+          $<HTMLInputElement>('#r-telefono')!.value.trim();
+        if (!ok) return error('r-error-3', T('res.errorDatos'));
+        error('r-error-3', null);
+        confirmar();
+        return ir(4);
+      }
+      ir(destino);
+    }
+
+    document.addEventListener('click', (e) => {
+      const t2 = e.target as HTMLElement;
+
+      const btnIr = t2.closest<HTMLElement>('[data-ir]');
+      if (btnIr) return intentar(Number(btnIr.dataset.ir));
+
+      const btnHab = t2.closest<HTMLElement>('[data-elegir]');
+      if (btnHab) {
+        estado.slug = btnHab.dataset.elegir!;
+        pintarHabitaciones();
+        intentar(3);
+      }
+    });
+
+    pintarIndicadores();
+
+    // Si llega con fechas en la URL, saltamos directo al paso 2.
+    if (q.get('entrada') && q.get('salida')) intentar(2);
+  }
+</script>

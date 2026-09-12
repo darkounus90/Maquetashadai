@@ -1,0 +1,253 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import FranjaConfianza from '../components/FranjaConfianza.astro';
+import Buscador from '../components/Buscador.astro';
+import Titulo from '../components/Titulo.astro';
+import Foto from '../components/Foto.astro';
+import Resenas from '../components/Resenas.astro';
+import Ubicacion from '../components/Ubicacion.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { useTranslations, ruta } from '../i18n/ui';
+import { habitaciones, servicios, eventos } from '../data/hotel';
+import { cop } from '../lib/precios';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'El Shaddai Punta del Este | Hotel y restaurante en el Desierto de la Tatacoa',
+    description:
+      'Hotel 4 estrellas en Villavieja, Huila. Piscina, jacuzzi y azotea privada para dormir bajo las estrellas del Desierto de la Tatacoa. Desayuno incluido y reserva directa sin comisiones.',
+  },
+  en: {
+    title: 'El Shaddai Punta del Este | Hotel and restaurant in the Tatacoa Desert',
+    description:
+      '4-star hotel in Villavieja, Huila. Pool, jacuzzi and a private rooftop for sleeping under the stars of the Tatacoa Desert. Breakfast included and direct booking with no commission.',
+  },
+};
+
+const intro = {
+  es: {
+    titulo: 'Un desierto, una piscina y el cielo entero para usted',
+    p1: 'Estamos a un kilómetro de Villavieja, sobre la vía que lleva al Desierto de la Tatacoa. De día, la piscina y la sombra. De noche, la azotea: sacamos una cama al aire libre y el cielo hace el resto. En la Tatacoa la Vía Láctea se ve a simple vista.',
+    p2: 'Cuatro estrellas, jacuzzi en las habitaciones, recepción a toda hora y un restaurante que lleva cincuenta años haciendo el mismo conejo al gratín. La mañana empieza con el canto de los pájaros, no con el tráfico.',
+  },
+  en: {
+    titulo: 'A desert, a pool, and the entire sky to yourself',
+    p1: 'We are one kilometre from Villavieja, on the road to the Tatacoa Desert. By day, the pool and the shade. By night, the rooftop: we move a bed outdoors and the sky does the rest. In the Tatacoa, the Milky Way is visible to the naked eye.',
+    p2: 'Four stars, a jacuzzi in the rooms, a reception that never closes, and a restaurant that has been making the same rabbit au gratin for fifty years. The morning starts with birdsong, not with traffic.',
+  },
+};
+const i = intro[lang];
+
+// Los servicios se agrupan en tres bloques en vez de doce tarjetas iguales.
+const grupos = {
+  es: ['La estadía', 'La casa', 'Detalles'],
+  en: ['The stay', 'The house', 'Details'],
+};
+const chunks = [servicios[lang].slice(0, 4), servicios[lang].slice(4, 8), servicios[lang].slice(8, 12)];
+
+const [principal, ...secundarias] = habitaciones;
+---
+
+<Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/">
+  <Hero lang={lang} />
+  <FranjaConfianza lang={lang} />
+  <Buscador lang={lang} />
+
+  <!-- Presentación: bloque de texto estrecho contra un par de fotos desfasadas -->
+  <section class="py-20 lg:py-28">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <Titulo titulo={i.titulo} />
+        <div class="revelar mt-7 space-y-5 text-[0.9375rem] leading-relaxed text-ink-2">
+          <p>{i.p1}</p>
+          <p>{i.p2}</p>
+        </div>
+        <a href={ruta(lang, '/galeria')} class="btn btn-linea revelar mt-9">{t('gal.titulo')}</a>
+      </div>
+
+      <div class="revelar grid grid-cols-2 gap-3 lg:col-span-7 lg:gap-4">
+        <div class="aspect-[3/4] lg:mt-16">
+          <Foto
+            id="f31"
+            alt={lang === 'es' ? 'Jacuzzi al aire libre junto a las habitaciones' : 'Outdoor jacuzzi beside the rooms'}
+            sizes="(min-width:1024px) 28vw, 45vw"
+          />
+        </div>
+        <div class="aspect-[3/4]">
+          <Foto
+            id="f07"
+            alt={lang === 'es' ? 'Cama al aire libre en la azotea' : 'Outdoor bed on the rooftop'}
+            sizes="(min-width:1024px) 28vw, 45vw"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Habitaciones: bento asimétrico, una grande y dos apiladas -->
+  <section class="border-t border-line py-20 lg:py-28">
+    <div class="contenedor">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <Titulo titulo={t('hab.titulo')} bajada={t('hab.bajada')} class="!max-w-xl" />
+        <a href={ruta(lang, '/habitaciones')} class="btn btn-linea revelar">
+          {lang === 'es' ? 'Ver todas' : 'View all'}
+        </a>
+      </div>
+
+      <div class="mt-12 grid gap-4 lg:grid-cols-12">
+        <a
+          href={ruta(lang, `/habitaciones/${principal.slug}`)}
+          class="revelar group relative block overflow-hidden lg:col-span-7"
+        >
+          <div class="aspect-[4/3] lg:aspect-[4/5]">
+            <Foto
+              id={principal.fotos[0]}
+              alt={principal.nombre[lang]}
+              sizes="(min-width:1024px) 56vw, 100vw"
+              class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+            />
+          </div>
+          <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep via-deep/70 to-transparent p-6 pt-24">
+            <h3 class="font-display text-2xl font-bold text-white">{principal.nombre[lang]}</h3>
+            <p class="mt-2 max-w-sm text-sm text-white/75">{principal.resumen[lang]}</p>
+            <p class="mt-4 text-sm text-white">
+              {t('hab.desde')}
+              <span class="font-display text-lg font-bold">{cop(principal.precios.baja, lang)}</span>
+            </p>
+          </div>
+        </a>
+
+        <div class="grid gap-4 lg:col-span-5">
+          {
+            secundarias.map((h) => (
+              <a href={ruta(lang, `/habitaciones/${h.slug}`)} class="revelar group relative block overflow-hidden">
+                <div class="aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[14rem]">
+                  <Foto
+                    id={h.fotos[0]}
+                    alt={h.nombre[lang]}
+                    sizes="(min-width:1024px) 38vw, 100vw"
+                    class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
+                  />
+                </div>
+                <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep via-deep/70 to-transparent p-5 pt-16">
+                  <h3 class="font-display text-lg font-bold text-white">{h.nombre[lang]}</h3>
+                  <p class="mt-1.5 text-xs text-white/70">
+                    {h.capacidad} {t('hab.personas')}, {h.m2} m²
+                  </p>
+                  <p class="mt-2 text-sm text-white">
+                    {t('hab.desde')}
+                    <span class="font-display font-bold">{cop(h.precios.baja, lang)}</span>
+                  </p>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Servicios: tres grupos con reglas finas, no doce tarjetas -->
+  <section class="border-t border-line bg-base-2 py-20 lg:py-28">
+    <div class="contenedor">
+      <Titulo titulo={lang === 'es' ? 'Todo incluido en la estadía' : 'All part of the stay'} />
+      <div class="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-3">
+        {
+          chunks.map((grupo, gi) => (
+            <div class="revelar" style={`transition-delay:${gi * 80}ms`}>
+              <h3 class="rotulo text-brasa-luz">{grupos[lang][gi]}</h3>
+              <dl class="mt-5 divide-y divide-line border-t border-line">
+                {grupo.map(([nombre, desc]) => (
+                  <div class="py-4">
+                    <dt class="text-sm font-semibold">{nombre}</dt>
+                    <dd class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- Restaurante: fotografía a sangre con bloque de texto encima -->
+  <section class="relative isolate min-h-[36rem] overflow-hidden lg:min-h-[44rem]">
+    <img
+      src="/img/fotos/f20.webp"
+      alt={lang === 'es' ? 'Plato principal del restaurante' : 'Main dish from the restaurant'}
+      loading="lazy"
+      width="1024"
+      height="683"
+      class="absolute inset-0 -z-10 h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 -z-10 bg-gradient-to-r from-deep via-deep/80 to-deep/20" aria-hidden="true"></div>
+
+    <div class="contenedor flex min-h-[36rem] items-end py-16 lg:min-h-[44rem] lg:py-24">
+      <div class="revelar max-w-lg">
+        <h2
+          class="font-display text-titulo font-extrabold text-white"
+          style="font-variation-settings:'opsz' 72,'wdth' 90"
+        >
+          {lang === 'es' ? 'Cincuenta años haciendo el mismo plato' : 'Fifty years making the same dish'}
+        </h2>
+        <p class="mt-6 text-[0.9375rem] leading-relaxed text-white/75">
+          {
+            lang === 'es'
+              ? 'El conejo al gratín es nuestra especialidad desde antes de que el desierto fuera un destino turístico. La cocina cruza Colombia con Uruguay, la terraza tiene BBQ y parasoles para cincuenta personas, y el comedor cubierto recibe a treinta y cinco.'
+              : 'Rabbit au gratin has been our specialty since before the desert became a destination. The kitchen crosses Colombia with Uruguay, the terrace has a BBQ and shade for fifty, and the covered dining room seats thirty-five.'
+          }
+        </p>
+        <blockquote class="mt-8 border-l-2 border-brasa pl-5">
+          <p class="text-[0.9375rem] italic leading-relaxed text-white/90">
+            {lang === 'es' ? '«La comida es un 10/10.»' : '"The food is a 10/10."'}
+          </p>
+          <cite class="mt-2 block text-xs not-italic text-white/50">
+            Brayan, {lang === 'es' ? 'huésped verificado' : 'verified guest'}
+          </cite>
+        </blockquote>
+        <a href={ruta(lang, '/restaurante')} class="btn btn-brasa mt-9">{t('rest.ver')}</a>
+      </div>
+    </div>
+  </section>
+
+  <Resenas lang={lang} />
+
+  <!-- Eventos: carril horizontal con anclaje -->
+  <section class="border-t border-line py-20 lg:py-28">
+    <div class="contenedor">
+      <div class="flex flex-wrap items-end justify-between gap-6">
+        <Titulo titulo={t('ev.titulo')} bajada={t('ev.bajada')} class="!max-w-xl" />
+        <a href={ruta(lang, '/eventos')} class="btn btn-linea revelar">{t('ev.ver')}</a>
+      </div>
+    </div>
+
+    <ul class="carril revelar mt-12 px-5 md:px-8 xl:px-14">
+      {
+        eventos[lang].map(([nombre, desc, foto]) => (
+          <li class="group w-[17rem] sm:w-[20rem]">
+            <div class="aspect-[4/5] overflow-hidden">
+              <Foto
+                id={foto}
+                alt={nombre}
+                sizes="20rem"
+                class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
+              />
+            </div>
+            <h3 class="mt-4 font-display text-lg font-bold">{nombre}</h3>
+            <p class="mt-1.5 text-sm leading-relaxed text-ink-3">{desc}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <Ubicacion lang={lang} />
+  <CtaFinal lang={lang} />
+</Base>

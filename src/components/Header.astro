@@ -1,0 +1,180 @@
+---
+import { Icon } from 'astro-icon/components';
+import { useTranslations, ruta } from '../i18n/ui';
+import type { Lang } from '../data/hotel';
+import Logo from './Logo.astro';
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+const { lang, path } = Astro.props;
+const t = useTranslations(lang);
+
+const enlaces = [
+  { key: 'nav.habitaciones', to: '/habitaciones' },
+  { key: 'nav.restaurante', to: '/restaurante' },
+  { key: 'nav.eventos', to: '/eventos' },
+  { key: 'nav.galeria', to: '/galeria' },
+  { key: 'nav.contacto', to: '/contacto' },
+] as const;
+
+const otro: Lang = lang === 'es' ? 'en' : 'es';
+---
+
+<header
+  id="cabecera"
+  class="fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,border-color] duration-500"
+  data-solido="false"
+>
+  <div class="contenedor flex h-16 items-center justify-between gap-6 lg:h-20">
+    <a
+      href={ruta(lang, '/')}
+      class="shrink-0 transition-opacity hover:opacity-70"
+      aria-label="El Shaddai Punta del Este"
+    >
+      <Logo class="h-9 w-auto lg:h-10" />
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex" aria-label="Principal">
+      {
+        enlaces.map((e) => (
+          <a
+            href={ruta(lang, e.to)}
+            class:list={[
+              'nav-link relative text-sm transition-colors',
+              path === e.to ? 'font-medium' : 'opacity-80 hover:opacity-100',
+            ]}
+            aria-current={path === e.to ? 'page' : undefined}
+          >
+            {t(e.key)}
+            {path === e.to && (
+              <span class="absolute -bottom-1.5 left-0 h-px w-full bg-brasa" aria-hidden="true" />
+            )}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <a
+        href={ruta(otro, path)}
+        class="nav-link hidden border border-line-2 px-3 py-1.5 text-xs font-medium uppercase tracking-widest opacity-75 transition-opacity hover:opacity-100 sm:block"
+        hreflang={otro}
+      >
+        {otro}
+      </a>
+      <a href={ruta(lang, '/reservar')} class="btn btn-brasa !px-5 !py-2.5 text-xs lg:!px-6 lg:!py-3 lg:text-sm">
+        {t('nav.reservar')}
+      </a>
+      <button
+        type="button"
+        id="abrir-menu"
+        class="nav-link -mr-2 grid h-11 w-11 place-items-center lg:hidden"
+        aria-label={lang === 'es' ? 'Abrir menú' : 'Open menu'}
+        aria-expanded="false"
+        aria-controls="menu-movil"
+      >
+        <Icon name="ph:list" class="h-6 w-6" />
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Menú móvil -->
+<div
+  id="menu-movil"
+  class="fixed inset-0 z-[60] hidden bg-deep text-ink"
+  role="dialog"
+  aria-modal="true"
+>
+  <div class="contenedor flex h-20 items-center justify-between">
+    <Logo class="h-9 w-auto" claro />
+    <button
+      type="button"
+      id="cerrar-menu"
+      class="-mr-2 grid h-11 w-11 place-items-center"
+      aria-label={lang === 'es' ? 'Cerrar menú' : 'Close menu'}
+    >
+      <Icon name="ph:x" class="h-6 w-6" />
+    </button>
+  </div>
+
+  <nav class="contenedor mt-8 flex flex-col gap-1" aria-label={lang === 'es' ? 'Menú' : 'Menu'}>
+    <a href={ruta(lang, '/')} class="border-b border-line py-4 font-display text-3xl">
+      {t('nav.inicio')}
+    </a>
+    {
+      enlaces.map((e) => (
+        <a href={ruta(lang, e.to)} class="border-b border-line py-4 font-display text-3xl">
+          {t(e.key)}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="contenedor mt-10 flex flex-col gap-4">
+    <a href={ruta(lang, '/reservar')} class="btn btn-brasa w-full">{t('nav.reservar')}</a>
+    <a href={ruta(otro, path)} class="btn btn-sobre-foto w-full" hreflang={otro}>
+      {otro === 'en' ? 'English' : 'Español'}
+    </a>
+  </div>
+</div>
+
+<style>
+  /* Sobre la fotografía del hero: sin fondo, solo un velo para legibilidad. */
+  #cabecera[data-solido='false'] {
+    background: linear-gradient(to bottom, rgb(8 9 10 / 0.6), transparent);
+  }
+  /* Tras salir del hero, y en todas las páginas interiores. */
+  #cabecera[data-solido='true'],
+  #cabecera[data-fijo='true'] {
+    background: color-mix(in srgb, var(--color-base) 92%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-line);
+  }
+</style>
+
+<script is:inline>
+  (() => {
+    // El hero se parsea después de la cabecera, así que esperamos al DOM.
+    const iniciar = () => {
+    const cabecera = document.getElementById('cabecera');
+    const hero = document.querySelector('[data-hero]');
+    const abrir = document.getElementById('abrir-menu');
+    const cerrar = document.getElementById('cerrar-menu');
+    const menu = document.getElementById('menu-movil');
+
+    if (cabecera) {
+      if (!hero) {
+        cabecera.dataset.fijo = 'true';
+        cabecera.dataset.solido = 'true';
+      } else {
+        const alSalirDelHero = () => {
+          cabecera.dataset.solido = window.scrollY > window.innerHeight * 0.7 ? 'true' : 'false';
+        };
+        alSalirDelHero();
+        window.addEventListener('scroll', alSalirDelHero, { passive: true });
+      }
+    }
+
+    const alternar = (abierto) => {
+      if (!menu || !abrir) return;
+      menu.classList.toggle('hidden', !abierto);
+      abrir.setAttribute('aria-expanded', String(abierto));
+      document.documentElement.style.overflow = abierto ? 'hidden' : '';
+    };
+    abrir?.addEventListener('click', () => alternar(true));
+    cerrar?.addEventListener('click', () => alternar(false));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') alternar(false);
+    });
+    };
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', iniciar);
+    } else {
+      iniciar();
+    }
+  })();
+</script>

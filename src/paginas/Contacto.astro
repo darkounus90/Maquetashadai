@@ -1,0 +1,153 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Ubicacion from '../components/Ubicacion.astro';
+import { useTranslations } from '../i18n/ui';
+import { hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Contacto | El Shaddai Punta del Este, Desierto de la Tatacoa',
+    description:
+      'Reservas y consultas: +57 312 555 0814. Km 1 vía Desierto de la Tatacoa, Villavieja, Huila. Recepción 24 horas, check-in 3:00 p.m., check-out 12:00 m.',
+  },
+  en: {
+    title: 'Contact | El Shaddai Punta del Este, Tatacoa Desert',
+    description:
+      'Bookings and enquiries: +57 312 555 0814. Km 1 Tatacoa Desert road, Villavieja, Huila. 24-hour reception, check-in 3:00 pm, check-out 12:00 pm.',
+  },
+};
+
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, quiero hacer una consulta sobre El Shaddai Punta del Este.'
+    : 'Hello, I have a question about El Shaddai Punta del Este.'
+);
+
+const canales = [
+  {
+    nombre: 'WhatsApp',
+    valor: hotel.telVisible,
+    href: `https://wa.me/${hotel.whatsapp}?text=${waMsg}`,
+    desc: { es: 'La vía más rápida. Respondemos todos los días.', en: 'The fastest way. We answer every day.' },
+  },
+  {
+    nombre: { es: 'Teléfono', en: 'Phone' },
+    valor: hotel.telVisible,
+    href: `tel:${hotel.tel}`,
+    desc: { es: 'Recepción 24 horas.', en: '24-hour reception.' },
+  },
+  {
+    nombre: { es: 'Correo', en: 'Email' },
+    valor: hotel.email,
+    href: `mailto:${hotel.email}`,
+    desc: { es: 'Para cotizaciones de eventos y grupos.', en: 'For event and group quotes.' },
+  },
+];
+---
+
+<Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/contacto" ogImage="/img/fotos/f13.webp">
+  <Encabezado
+    titulo={t('con.titulo')}
+    bajada={t('con.bajada')}
+    foto="f13"
+    alt={lang === 'es' ? 'Piscina y jardines del hotel' : 'Hotel pool and gardens'}
+  />
+
+  <section class="py-24 lg:py-32">
+    <div class="contenedor grid gap-12 lg:grid-cols-12 lg:gap-16">
+      <div class="lg:col-span-5">
+        <h2 class="revelar font-display text-seccion font-light">{t('con.datos')}</h2>
+
+        <ul class="revelar mt-10 divide-y divide-line border-y border-line">
+          {
+            canales.map((c) => (
+              <li class="py-5">
+                <p class="text-xs uppercase tracking-widest text-ink-3">
+                  {typeof c.nombre === 'string' ? c.nombre : c.nombre[lang]}
+                </p>
+                <p class="mt-1.5">
+                  <a href={c.href} rel="noopener" class="font-display text-lg transition-colors hover:text-brasa-luz">
+                    {c.valor}
+                  </a>
+                </p>
+                <p class="mt-1 text-sm text-ink-3">{c.desc[lang]}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <h3 class="revelar mt-12 font-display text-lg font-normal">{t('con.horarios')}</h3>
+        <dl class="revelar mt-4 space-y-2.5 text-sm">
+          <div class="flex justify-between gap-6 border-b border-line pb-2.5">
+            <dt class="text-ink-3">{t('con.checkin')}</dt>
+            <dd>{hotel.checkIn}</dd>
+          </div>
+          <div class="flex justify-between gap-6 border-b border-line pb-2.5">
+            <dt class="text-ink-3">{t('con.checkout')}</dt>
+            <dd>{hotel.checkOut}</dd>
+          </div>
+          <div class="flex justify-between gap-6">
+            <dt class="text-ink-3">{lang === 'es' ? 'Recepción' : 'Reception'}</dt>
+            <dd>{lang === 'es' ? '24 horas' : '24 hours'}</dd>
+          </div>
+        </dl>
+
+        <p class="revelar mt-10 text-xs text-ink-3">
+          {t('foot.rnt')} {hotel.rnt}
+        </p>
+      </div>
+
+      <div class="lg:col-span-7">
+        <form
+          class="revelar border border-line bg-panel p-6 sm:p-8"
+          action={`mailto:${hotel.email}`}
+          method="post"
+          enctype="text/plain"
+        >
+          <div class="space-y-5">
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label class="etiqueta" for="c-nombre">{t('res.nombre')}</label>
+                <input class="campo" type="text" id="c-nombre" name="nombre" required />
+              </div>
+              <div>
+                <label class="etiqueta" for="c-correo">{t('res.correo')}</label>
+                <input class="campo" type="email" id="c-correo" name="correo" required />
+              </div>
+            </div>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div>
+                <label class="etiqueta" for="c-tel">{t('res.telefono')}</label>
+                <input class="campo" type="tel" id="c-tel" name="telefono" />
+              </div>
+              <div>
+                <label class="etiqueta" for="c-asunto">{t('con.asunto')}</label>
+                <input class="campo" type="text" id="c-asunto" name="asunto" />
+              </div>
+            </div>
+            <div>
+              <label class="etiqueta" for="c-mensaje">{t('con.mensaje')}</label>
+              <textarea class="campo" id="c-mensaje" name="mensaje" rows="6" required></textarea>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-claro mt-7">{t('con.enviar')}</button>
+          <p class="mt-4 text-xs text-ink-3">
+            {
+              lang === 'es'
+                ? 'También puede escribirnos por WhatsApp: suele ser más rápido.'
+                : 'You can also reach us on WhatsApp: it is usually faster.'
+            }
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <Ubicacion lang={lang} />
+</Base>

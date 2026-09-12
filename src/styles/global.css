@@ -1,0 +1,245 @@
+@import 'tailwindcss';
+
+/* ---------------------------------------------------------------------------
+   Sistema visual: "arcilla y ceniza".
+   El Desierto de la Tatacoa tiene dos zonas: Cuzco, de arcilla roja, y Los
+   Hoyos, de ceniza gris. La paleta es exactamente eso: gris frío de ceniza
+   como base, terracota saturada como único acento. El sitio está bloqueado en
+   modo oscuro a propósito: el producto que vende este hotel es el cielo de
+   noche, y una interfaz clara lo contradice.
+   Radio de esquina: 0 en todo el sistema. Sin excepciones.
+--------------------------------------------------------------------------- */
+
+@theme {
+  /* Superficies */
+  --color-base: #101315;
+  --color-base-2: #171b1e;
+  --color-deep: #08090a;
+  --color-panel: #1c2124;
+  --color-panel-2: #242a2e;
+
+  /* Líneas */
+  --color-line: #282f33;
+  --color-line-2: #3b444a;
+
+  /* Texto */
+  --color-ink: #eceeef;
+  --color-ink-2: #a3abb0;
+  --color-ink-3: #6b7479;
+
+  /* Acento único: brasa. Se usa igual en toda la página, sin segundo acento. */
+  --color-brasa: #c4462a;
+  --color-brasa-2: #e2583a;
+  --color-brasa-3: #8f2f1a;
+  /* Variante para texto pequeño: el acento pleno no pasa AA en 14px. */
+  --color-brasa-luz: #ff8a6a;
+
+  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+
+  --text-hero: clamp(2.5rem, 7.5vw, 5.75rem);
+  --text-titulo: clamp(1.9rem, 4vw, 3.25rem);
+  --text-seccion: clamp(1.5rem, 2.6vw, 2.125rem);
+
+  --radius-none: 0;
+  --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    background: var(--color-base);
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-base);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-brasa);
+    color: #fff;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-variation-settings: 'opsz' 48, 'wdth' 100;
+    letter-spacing: -0.03em;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  p { text-wrap: pretty; }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brasa-2);
+    outline-offset: 2px;
+  }
+
+  input, select, textarea, button { font: inherit; }
+
+  /* Un solo sistema de esquinas en toda la página: recto. */
+  *, *::before, *::after { border-radius: 0 !important; }
+
+  input[type='date']::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.5;
+    cursor: pointer;
+  }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: var(--color-base); }
+  ::-webkit-scrollbar-thumb { background: var(--color-line-2); }
+}
+
+@layer components {
+  .contenedor {
+    width: 100%;
+    max-width: 87.5rem;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+  }
+  @media (min-width: 768px) {
+    .contenedor { padding-inline: 2rem; }
+  }
+  @media (min-width: 1280px) {
+    .contenedor { padding-inline: 3.5rem; }
+  }
+
+  /* Botones: rectangulares, sin sombra, sin brillo. */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    padding: 0.95rem 1.65rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition:
+      background-color 0.22s var(--ease-suave),
+      color 0.22s var(--ease-suave),
+      border-color 0.22s var(--ease-suave),
+      transform 0.12s var(--ease-suave);
+  }
+  .btn:active { transform: translateY(1px); }
+
+  .btn-brasa {
+    background: var(--color-brasa);
+    color: #fff;
+  }
+  .btn-brasa:hover { background: var(--color-brasa-2); }
+
+  .btn-claro {
+    background: var(--color-ink);
+    color: var(--color-deep);
+  }
+  .btn-claro:hover { background: #fff; }
+
+  .btn-linea {
+    border-color: var(--color-line-2);
+    color: var(--color-ink);
+    background: transparent;
+  }
+  .btn-linea:hover {
+    border-color: var(--color-ink);
+    background: var(--color-ink);
+    color: var(--color-deep);
+  }
+
+  /* Sobre fotografía: fondo semiopaco para garantizar contraste AA. */
+  .btn-sobre-foto {
+    background: rgb(8 9 10 / 0.55);
+    backdrop-filter: blur(8px);
+    border-color: rgb(236 238 239 / 0.4);
+    color: #fff;
+  }
+  .btn-sobre-foto:hover {
+    background: var(--color-ink);
+    color: var(--color-deep);
+    border-color: var(--color-ink);
+  }
+
+  .campo {
+    width: 100%;
+    background: var(--color-panel);
+    border: 1px solid var(--color-line-2);
+    padding: 0.8rem 0.9rem;
+    font-size: 0.9375rem;
+    color: var(--color-ink);
+    transition: border-color 0.2s var(--ease-suave), background-color 0.2s var(--ease-suave);
+  }
+  .campo::placeholder { color: var(--color-ink-3); }
+  .campo:focus {
+    outline: none;
+    border-color: var(--color-brasa-2);
+    background: var(--color-panel-2);
+  }
+
+  .etiqueta {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+    margin-bottom: 0.45rem;
+  }
+
+  /* Rótulo de columna (pie de página, grupos de formulario). No es un
+     "eyebrow" decorativo sobre un titular: es la etiqueta de una lista. */
+  .rotulo {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+
+  /* Regla fina de sección: una sola línea, no marcos. */
+  .regla {
+    height: 1px;
+    background: var(--color-line);
+  }
+
+  .revelar {
+    opacity: 0;
+    transform: translateY(1.25rem);
+    transition: opacity 0.7s var(--ease-suave), transform 0.7s var(--ease-suave);
+  }
+  .revelar.visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Carruseles horizontales con anclaje. */
+  .carril {
+    display: flex;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    padding-bottom: 1rem;
+  }
+  .carril > * {
+    scroll-snap-align: start;
+    flex: 0 0 auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .revelar { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,12 @@
+---
+import Habitacion from '../../../paginas/Habitacion.astro';
+import { habitaciones } from '../../../data/hotel';
+
+export function getStaticPaths() {
+  return habitaciones.map((hab) => ({ params: { slug: hab.slug }, props: { hab } }));
+}
+
+const { hab } = Astro.props;
+---
+
+<Habitacion lang="en" hab={hab} />

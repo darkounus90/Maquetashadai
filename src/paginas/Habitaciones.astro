@@ -1,0 +1,173 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import Foto from '../components/Foto.astro';
+import CtaFinal from '../components/CtaFinal.astro';
+import { useTranslations, ruta } from '../i18n/ui';
+import { habitaciones, temporadas, servicios } from '../data/hotel';
+import { cop } from '../lib/precios';
+import type { Lang, Temporada } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const meta = {
+  es: {
+    title: 'Habitaciones | El Shaddai Punta del Este, Desierto de la Tatacoa',
+    description:
+      'Habitación doble con cama king y vista a la piscina, cuádruple y familiar para 7 personas. Todas con jacuzzi, aire acondicionado y desayuno incluido. Precios desde $252.000 la noche.',
+    titulo: 'Tres habitaciones, un mismo cielo',
+    bajada:
+      'Todas con jacuzzi, aire acondicionado, nevera, TV, caja fuerte y desayuno incluido. Todas con acceso a la piscina y a la azotea.',
+  },
+  en: {
+    title: 'Rooms | El Shaddai Punta del Este, Tatacoa Desert',
+    description:
+      'Double room with king bed and pool view, quadruple room and family room for 7. All with jacuzzi, air conditioning and breakfast included. From COP 252,000 per night.',
+    titulo: 'Three rooms, one sky',
+    bajada:
+      'All with a jacuzzi, air conditioning, fridge, TV, safe and breakfast included. All with access to the pool and the rooftop.',
+  },
+};
+const m = meta[lang];
+const temps: Temporada[] = ['baja', 'media', 'alta'];
+
+// Las dos primeras van en split alternado; la tercera rompe el patrón con un
+// bloque a todo el ancho, para no encadenar tres zigzags iguales.
+const enSplit = habitaciones.slice(0, 2);
+const aloAncho = habitaciones[2];
+---
+
+<Base lang={lang} title={m.title} description={m.description} path="/habitaciones" ogImage="/img/fotos/f30.webp">
+  <Encabezado
+    titulo={m.titulo}
+    bajada={m.bajada}
+    foto="f31"
+    alt={lang === 'es' ? 'Jacuzzi frente a las habitaciones' : 'Jacuzzi in front of the rooms'}
+  />
+
+  <div class="contenedor space-y-20 py-20 lg:space-y-28 lg:py-28">
+    {
+      enSplit.map((h, idx) => (
+        <article class="revelar grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
+          <div class:list={['lg:col-span-7', idx === 1 && 'lg:order-2']}>
+            <div class="aspect-[16/11]">
+              <Foto
+                id={h.fotos[0]}
+                alt={h.nombre[lang]}
+                prioridad={idx === 0}
+                sizes="(min-width:1024px) 58vw, 100vw"
+              />
+            </div>
+            <div class="mt-3 grid grid-cols-3 gap-3">
+              {h.fotos.slice(1, 4).map((f) => (
+                <div class="aspect-[4/3]">
+                  <Foto id={f} alt={h.nombre[lang]} sizes="(min-width:1024px) 19vw, 32vw" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div class:list={['lg:col-span-5', idx === 1 && 'lg:order-1']}>
+            <h2 class="font-display text-seccion font-bold">{h.nombre[lang]}</h2>
+            <p class="mt-3 text-sm text-ink-3">
+              {h.capacidad} {h.capacidad === 1 ? t('hab.persona') : t('hab.personas')}, {h.m2} m², {h.camas[lang]}
+            </p>
+            <p class="mt-6 text-[0.9375rem] leading-relaxed text-ink-2">{h.descripcion[lang]}</p>
+
+            <ul class="mt-7 flex flex-wrap gap-2">
+              {h.destacados[lang].map((d) => (
+                <li class="border border-line px-3 py-1.5 text-xs text-ink-2">{d}</li>
+              ))}
+            </ul>
+
+            <dl class="mt-8 divide-y divide-line border-y border-line">
+              {temps.map((tp) => (
+                <div class="flex items-baseline justify-between gap-6 py-3">
+                  <dt class="text-sm text-ink-2">{temporadas[tp].nombre[lang]}</dt>
+                  <dd class="font-display text-base font-bold">
+                    {cop(h.precios[tp], lang)}
+                    <span class="text-xs font-normal text-ink-3"> / {t('hab.noche')}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href={ruta(lang, `/reservar?habitacion=${h.slug}`)} class="btn btn-brasa">
+                {t('hab.reservar')}
+              </a>
+              <a href={ruta(lang, `/habitaciones/${h.slug}`)} class="btn btn-linea">{t('hab.ver')}</a>
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <!-- La familiar rompe el zigzag: banda a todo el ancho -->
+  <article class="revelar border-y border-line bg-base-2">
+    <div class="aspect-[21/9] max-h-[32rem] w-full">
+      <Foto
+        id={aloAncho.fotos[0]}
+        alt={aloAncho.nombre[lang]}
+        sizes="100vw"
+      />
+    </div>
+    <div class="contenedor grid gap-10 py-14 lg:grid-cols-12 lg:gap-14 lg:py-20">
+      <div class="lg:col-span-5">
+        <h2 class="font-display text-seccion font-bold">{aloAncho.nombre[lang]}</h2>
+        <p class="mt-3 text-sm text-ink-3">
+          {aloAncho.capacidad} {t('hab.personas')}, {aloAncho.m2} m², {aloAncho.camas[lang]}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={ruta(lang, `/reservar?habitacion=${aloAncho.slug}`)} class="btn btn-brasa">
+            {t('hab.reservar')}
+          </a>
+          <a href={ruta(lang, `/habitaciones/${aloAncho.slug}`)} class="btn btn-linea">{t('hab.ver')}</a>
+        </div>
+      </div>
+
+      <div class="lg:col-span-4">
+        <p class="text-[0.9375rem] leading-relaxed text-ink-2">{aloAncho.descripcion[lang]}</p>
+        <ul class="mt-6 flex flex-wrap gap-2">
+          {aloAncho.destacados[lang].map((d) => (
+            <li class="border border-line px-3 py-1.5 text-xs text-ink-2">{d}</li>
+          ))}
+        </ul>
+      </div>
+
+      <dl class="divide-y divide-line border-y border-line lg:col-span-3">
+        {
+          temps.map((tp) => (
+            <div class="flex items-baseline justify-between gap-6 py-3">
+              <dt class="text-sm text-ink-2">{temporadas[tp].nombre[lang]}</dt>
+              <dd class="font-display text-base font-bold">{cop(aloAncho.precios[tp], lang)}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </article>
+
+  <section class="py-20 lg:py-28">
+    <div class="contenedor">
+      <h2 class="revelar font-display text-seccion font-bold">
+        {lang === 'es' ? 'En todas las habitaciones' : 'In every room'}
+      </h2>
+      <dl class="revelar mt-10 grid gap-x-14 md:grid-cols-2">
+        {
+          servicios[lang].map(([nombre, desc]) => (
+            <div class="border-b border-line py-4">
+              <dt class="text-sm font-semibold">{nombre}</dt>
+              <dd class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <CtaFinal lang={lang} />
+</Base>

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+
+# Generadas por scripts/fotos.mjs en cada build.
+public/img/fotos/
+
+# Zips de entrega.
+entrega/
+
+.DS_Store
+*.log

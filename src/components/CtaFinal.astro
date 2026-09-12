@@ -1,0 +1,43 @@
+---
+import { useTranslations, ruta } from '../i18n/ui';
+import { hotel } from '../data/hotel';
+import type { Lang } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const waMsg = encodeURIComponent(
+  lang === 'es'
+    ? 'Hola, quiero reservar en El Shaddai Punta del Este.'
+    : 'Hello, I would like to book a stay at El Shaddai Punta del Este.'
+);
+---
+
+<section class="relative isolate overflow-hidden bg-deep py-28 lg:py-36">
+  <img
+    src="/img/fotos/f17.webp"
+    alt=""
+    aria-hidden="true"
+    loading="lazy"
+    width="1024"
+    height="683"
+    class="absolute inset-0 -z-10 h-full w-full object-cover opacity-35"
+  />
+  <div class="absolute inset-0 -z-10 bg-gradient-to-r from-deep via-deep/75 to-deep/40"></div>
+
+  <div class="contenedor">
+    <div class="revelar max-w-xl">
+      <h2 class="font-display text-titulo font-extrabold text-white" style="font-variation-settings:'opsz' 72,'wdth' 90">{t('cta.titulo')}</h2>
+      <p class="mt-5 text-base leading-relaxed text-ink-2 sm:text-lg">{t('cta.bajada')}</p>
+
+      <div class="mt-9 flex flex-wrap gap-3">
+        <a href={ruta(lang, '/reservar')} class="btn btn-brasa">{t('nav.reservar')}</a>
+        <a href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`} rel="noopener" class="btn btn-sobre-foto">
+          {t('cta.whatsapp')}
+        </a>
+        <a href={`tel:${hotel.tel}`} class="btn btn-sobre-foto">{hotel.telVisible}</a>
+      </div>
+    </div>
+  </div>
+</section>

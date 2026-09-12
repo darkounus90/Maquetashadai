@@ -1,0 +1,144 @@
+---
+import Base from '../layouts/Base.astro';
+import Encabezado from '../components/Encabezado.astro';
+import { useTranslations } from '../i18n/ui';
+import { hotel, temporadas } from '../data/hotel';
+import type { Lang, Temporada } from '../data/hotel';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const temps: Temporada[] = ['alta', 'media', 'baja'];
+
+const secciones = {
+  es: [
+    {
+      h: 'Ocupación y documentación',
+      p: [
+        'Para garantizar su estadía es obligatorio respetar la ocupación indicada al momento de la reserva.',
+        'Cada integrante de la reserva debe presentar su documento de identidad al ingresar. En el caso de menores de edad, es necesario presentar el registro civil o la tarjeta de identidad.',
+      ],
+    },
+    {
+      h: 'Reservas',
+      p: [
+        `Las reservas se realizan directamente con el hotel, a través de esta página web o del número ${hotel.telVisible}.`,
+        'No se requiere tarjeta de crédito para reservar. El pago se realiza al llegar al hotel, en efectivo o con tarjeta débito o crédito.',
+      ],
+    },
+    {
+      h: 'Horarios de check-in y check-out',
+      p: [
+        `Ingreso a partir de las ${hotel.checkIn}. Salida hasta las ${hotel.checkOut}.`,
+        'Si su hora de llegada difiere de estos horarios, notifíquelo previamente al asesor de reservas para evitar inconvenientes.',
+      ],
+    },
+    {
+      h: 'Responsabilidad por daños',
+      p: ['El huésped es responsable de cualquier daño ocasionado en la habitación durante su estadía.'],
+    },
+    {
+      h: 'Confirmación de datos',
+      p: [
+        'Verifique que todos los datos de la confirmación de su reserva sean correctos y coincidan con lo solicitado.',
+      ],
+    },
+    {
+      h: 'Mascotas',
+      p: ['Las mascotas son bienvenidas sin costo adicional, previa solicitud al momento de reservar.'],
+    },
+  ],
+  en: [
+    {
+      h: 'Occupancy and identification',
+      p: [
+        'To guarantee your stay, the occupancy stated at the time of booking must be respected.',
+        'Every guest in the booking must present identification on arrival. For minors, a birth certificate or identity card is required.',
+      ],
+    },
+    {
+      h: 'Bookings',
+      p: [
+        `Bookings are made directly with the hotel, through this website or by calling ${hotel.telVisible}.`,
+        'No credit card is required to book. Payment is made on arrival, in cash or by debit or credit card.',
+      ],
+    },
+    {
+      h: 'Check-in and check-out',
+      p: [
+        `Check-in from ${hotel.checkIn}. Check-out by ${hotel.checkOut}.`,
+        'If your arrival time differs from these hours, please let the reservations desk know in advance.',
+      ],
+    },
+    {
+      h: 'Liability for damages',
+      p: ['Guests are responsible for any damage caused to the room during their stay.'],
+    },
+    {
+      h: 'Confirming your details',
+      p: ['Please check that every detail on your booking confirmation is correct and matches your request.'],
+    },
+    {
+      h: 'Pets',
+      p: ['Pets are welcome at no extra cost, on request at the time of booking.'],
+    },
+  ],
+};
+---
+
+<Base
+  lang={lang}
+  title={lang === 'es'
+    ? 'Términos y condiciones | El Shaddai Punta del Este'
+    : 'Terms and conditions | El Shaddai Punta del Este'}
+  description={lang === 'es'
+    ? 'Condiciones de reserva, temporadas, horarios de check-in y check-out y políticas del hotel El Shaddai Punta del Este.'
+    : 'Booking conditions, seasons, check-in and check-out times and policies of El Shaddai Punta del Este.'}
+  path="/terminos"
+>
+  <Encabezado
+    titulo={t('foot.terminos')}
+    foto="f08"
+    alt={lang === 'es' ? 'Terraza del hotel' : 'Hotel terrace'}
+  />
+
+  <section class="py-24 lg:py-32">
+    <div class="contenedor max-w-3xl">
+      <div class="revelar">
+        <h2 class="font-display text-seccion font-light">
+          {lang === 'es' ? 'Temporadas' : 'Seasons'}
+        </h2>
+        <dl class="mt-8 space-y-5">
+          {
+            temps.map((tp) => (
+              <div class="border border-line bg-base-2 p-5">
+                <dt class="font-display text-base">{temporadas[tp].nombre[lang]}</dt>
+                <dd class="mt-1.5 text-sm leading-relaxed text-ink-2">{temporadas[tp].desc[lang]}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+
+      <div class="mt-16 space-y-12">
+        {
+          secciones[lang].map((s) => (
+            <section class="revelar">
+              <h2 class="font-display text-xl font-normal">{s.h}</h2>
+              <div class="mt-4 space-y-3 text-sm leading-relaxed text-ink-2">
+                {s.p.map((x) => (
+                  <p>{x}</p>
+                ))}
+              </div>
+            </section>
+          ))
+        }
+      </div>
+
+      <p class="revelar mt-16 border-t border-line pt-6 text-xs text-ink-3">
+        {hotel.direccion}. {t('foot.rnt')} {hotel.rnt}
+      </p>
+    </div>
+  </section>
+</Base>

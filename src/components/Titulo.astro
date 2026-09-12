@@ -1,0 +1,15 @@
+---
+interface Props {
+  titulo: string;
+  bajada?: string;
+  class?: string;
+}
+const { titulo, bajada, class: clase = '' } = Astro.props;
+---
+
+<div class:list={['revelar max-w-2xl', clase]}>
+  <h2 class="font-display text-titulo font-bold" style="font-variation-settings:'opsz' 72,'wdth' 92">
+    {titulo}
+  </h2>
+  {bajada && <p class="mt-5 max-w-xl text-base leading-relaxed text-ink-2">{bajada}</p>}
+</div>

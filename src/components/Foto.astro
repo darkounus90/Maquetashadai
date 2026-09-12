@@ -1,0 +1,23 @@
+---
+interface Props {
+  id: string;
+  alt: string;
+  class?: string;
+  /** La primera imagen visible no debe ir en lazy. */
+  prioridad?: boolean;
+  sizes?: string;
+}
+const { id, alt, class: clase = '', prioridad = false, sizes = '100vw' } = Astro.props;
+---
+
+<img
+  src={`/img/fotos/${id}.webp`}
+  alt={alt}
+  sizes={sizes}
+  width="1024"
+  height="683"
+  loading={prioridad ? 'eager' : 'lazy'}
+  decoding={prioridad ? 'sync' : 'async'}
+  fetchpriority={prioridad ? 'high' : 'auto'}
+  class:list={['h-full w-full object-cover', clase]}
+/>
