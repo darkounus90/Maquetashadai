@@ -17,6 +17,8 @@ export const ui = {
       'Piscina privada, azotea propia y un desierto entero de silencio. A cinco kilómetros del observatorio de la Tatacoa.',
     'hero.cta': 'Reservar',
     'hero.cta2': 'Conocer el hotel',
+    'hero.lugar': 'Desierto de la Tatacoa · Villavieja, Huila',
+    'hero.pie': 'La azotea del hotel y, a cinco kilómetros, las cárcavas rojas de la Tatacoa.',
 
     'buscador.titulo': 'Reserve directo con el hotel',
     'buscador.entrada': 'Entrada',
@@ -24,6 +26,8 @@ export const ui = {
     'buscador.huespedes': 'Huéspedes',
     'buscador.buscar': 'Buscar habitaciones',
     'buscador.nota': 'Sin comisiones de intermediarios. Mejor precio garantizado.',
+    'buscador.consultar': 'Consultar',
+    'buscador.resenas': 'reseñas',
 
     'prueba.titulo': 'Lo que dicen quienes ya durmieron aquí',
     'prueba.de': 'de',
@@ -145,6 +149,8 @@ export const ui = {
       'A private pool, your own rooftop, and an entire desert of silence. Five kilometres from the Tatacoa observatory.',
     'hero.cta': 'Book',
     'hero.cta2': 'Explore the hotel',
+    'hero.lugar': 'Tatacoa Desert · Villavieja, Huila',
+    'hero.pie': 'The hotel rooftop and, five kilometres away, the red badlands of the Tatacoa.',
 
     'buscador.titulo': 'Book direct with the hotel',
     'buscador.entrada': 'Check-in',
@@ -152,6 +158,8 @@ export const ui = {
     'buscador.huespedes': 'Guests',
     'buscador.buscar': 'Search rooms',
     'buscador.nota': 'No agency commissions. Best rate guaranteed.',
+    'buscador.consultar': 'Search',
+    'buscador.resenas': 'reviews',
 
     'prueba.titulo': 'What people who slept here say',
     'prueba.de': 'of',

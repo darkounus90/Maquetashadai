@@ -37,7 +37,8 @@ portadas de destacadas, la foto de perfil y el logo de su web.
 - Modo oscuro **bloqueado** a propósito: lo que vende este hotel es el cielo de
   noche, y una interfaz clara lo contradice.
 - Radio de esquina **0** en todo el sistema, sin excepciones.
-- Display: Bricolage Grotesque. Texto: Archivo. Iconos: Phosphor.
+- Títulos: Cormorant Garamond. Texto: Instrument Sans. Iconos: Phosphor.
+  Distintas a propósito de las de Cosmos Tatacoa (Young Serif + Bricolage).
 - Oro (`--color-oro`, `#d69948`) para rellenos, **siempre con texto granate**
   (`--color-granate`, `#582832`, 4,8:1), como en el logo. Blanco sobre oro da
   2,5:1 y no pasa.

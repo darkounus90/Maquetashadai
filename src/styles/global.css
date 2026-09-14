@@ -43,12 +43,12 @@
   /* Las letras del logo. Solo sobre oro: sobre el fondo oscuro no se lee. */
   --color-granate: #582832;
 
-  --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
-  --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
 
-  --text-hero: clamp(2.5rem, 7.5vw, 5.75rem);
-  --text-titulo: clamp(1.9rem, 4vw, 3.25rem);
-  --text-seccion: clamp(1.5rem, 2.6vw, 2.125rem);
+  --text-hero: clamp(3rem, 6.4vw, 6.25rem);
+  --text-titulo: clamp(2.15rem, 4.2vw, 3.75rem);
+  --text-seccion: clamp(1.7rem, 2.8vw, 2.4rem);
 
   --radius-none: 0;
   --ease-suave: cubic-bezier(0.22, 1, 0.36, 1);
@@ -77,10 +77,17 @@
 
   h1, h2, h3, h4 {
     font-family: var(--font-display);
-    font-variation-settings: 'opsz' 48, 'wdth' 100;
-    letter-spacing: -0.03em;
-    line-height: 1.02;
+    letter-spacing: -0.012em;
+    line-height: 1.04;
     text-wrap: balance;
+    /* Cormorant trae cifras de estilo antiguo por defecto: en titulos y
+       precios se leen desiguales. */
+    font-variant-numeric: lining-nums;
+  }
+
+  /* Cifras que se comparan en columna (precios, totales): mismo ancho. */
+  dd, [data-cifras] {
+    font-variant-numeric: tabular-nums lining-nums;
   }
 
   p { text-wrap: pretty; }
@@ -207,11 +214,16 @@
 
   /* Rótulo de columna (pie de página, grupos de formulario). No es un
      "eyebrow" decorativo sobre un titular: es la etiqueta de una lista. */
+  /* Etiquetas en cursiva de la serif, no en mayusculas espaciadas: las
+     versalitas tracked en cada seccion son la marca de la plantilla generica. */
   .rotulo {
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.13em;
-    text-transform: uppercase;
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-style: italic;
+    font-weight: 500;
+    letter-spacing: 0;
+    line-height: 1.3;
+    font-variant-numeric: lining-nums;
   }
 
   /* Regla fina de sección: una sola línea, no marcos. */

@@ -71,7 +71,7 @@ const aloAncho = habitaciones[2];
           </div>
 
           <div class:list={['lg:col-span-5', idx === 1 && 'lg:order-1']}>
-            <h2 class="font-display text-seccion font-bold">{h.nombre[lang]}</h2>
+            <h2 class="font-display text-seccion font-semibold">{h.nombre[lang]}</h2>
             <p class="mt-3 text-sm text-ink-3">
               {h.capacidad} {h.capacidad === 1 ? t('hab.persona') : t('hab.personas')}, {h.m2} m², {h.camas[lang]}
             </p>
@@ -87,7 +87,7 @@ const aloAncho = habitaciones[2];
               {temps.map((tp) => (
                 <div class="flex items-baseline justify-between gap-6 py-3">
                   <dt class="text-sm text-ink-2">{temporadas[tp].nombre[lang]}</dt>
-                  <dd class="font-display text-base font-bold">
+                  <dd class="font-display text-base font-semibold">
                     {cop(h.precios[tp], lang)}
                     <span class="text-xs font-normal text-ink-3"> / {t('hab.noche')}</span>
                   </dd>
@@ -118,7 +118,7 @@ const aloAncho = habitaciones[2];
     </div>
     <div class="contenedor grid gap-10 py-14 lg:grid-cols-12 lg:gap-14 lg:py-20">
       <div class="lg:col-span-5">
-        <h2 class="font-display text-seccion font-bold">{aloAncho.nombre[lang]}</h2>
+        <h2 class="font-display text-seccion font-semibold">{aloAncho.nombre[lang]}</h2>
         <p class="mt-3 text-sm text-ink-3">
           {aloAncho.capacidad} {t('hab.personas')}, {aloAncho.m2} m², {aloAncho.camas[lang]}
         </p>
@@ -144,7 +144,7 @@ const aloAncho = habitaciones[2];
           temps.map((tp) => (
             <div class="flex items-baseline justify-between gap-6 py-3">
               <dt class="text-sm text-ink-2">{temporadas[tp].nombre[lang]}</dt>
-              <dd class="font-display text-base font-bold">{cop(aloAncho.precios[tp], lang)}</dd>
+              <dd class="font-display text-base font-semibold">{cop(aloAncho.precios[tp], lang)}</dd>
             </div>
           ))
         }
@@ -154,7 +154,7 @@ const aloAncho = habitaciones[2];
 
   <section class="py-20 lg:py-28">
     <div class="contenedor">
-      <h2 class="revelar font-display text-seccion font-bold">
+      <h2 class="revelar font-display text-seccion font-semibold">
         {lang === 'es' ? 'En todas las habitaciones' : 'In every room'}
       </h2>
       <dl class="revelar mt-10 grid gap-x-14 md:grid-cols-2">

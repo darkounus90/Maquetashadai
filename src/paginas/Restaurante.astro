@@ -138,7 +138,7 @@ const espacios = {
   <section class="bg-deep py-24 text-ink lg:py-32">
     <div class="contenedor max-w-4xl">
       <header class="revelar">
-        <h2 class="font-display text-titulo font-extrabold" style="font-variation-settings:'opsz' 72,'wdth' 90">
+        <h2 class="font-display text-titulo font-semibold">
           {lang === 'es' ? 'La carta' : 'The menu'}
         </h2>
       </header>
@@ -155,7 +155,7 @@ const espacios = {
                       <h4 class="font-display text-base font-normal">{nombre}</h4>
                       <p class="mt-1 text-sm leading-relaxed text-ink-3">{desc}</p>
                     </div>
-                    <p class="shrink-0 font-display text-base text-ink">
+                    <p class="shrink-0 font-display text-base tabular-nums text-ink">
                       {(precio as number) === 0 ? t('rest.incluido') : cop(precio as number, lang)}
                     </p>
                   </li>

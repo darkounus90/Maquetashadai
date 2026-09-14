@@ -2,14 +2,13 @@
  * Genera public/img/fotos/*.webp antes de construir el sitio.
  *
  * Las fotos originales son del hotel y pesan 7,2 MB en JPEG. En vez de
- * versionarlas, este script las resuelve en tiempo de build:
- *   1. Si existe fotos-src/fXX.jpg en disco (desarrollo local), la usa.
- *   2. Si no (build en Vercel), la descarga de la lista de URLs.
+ * versionar las convertidas, este script las resuelve en tiempo de build:
+ *   1. Si existe fotos-src/fXX.jpg en disco, la usa.
+ *   2. Si no, la descarga de la lista de URLs.
  * En ambos casos la convierte a WebP al ancho en que realmente se muestra.
  *
- * También escribe src/data/dimensiones.json con el tamaño real de cada
- * archivo generado. Antes las plantillas declaraban 1024x683 para todas, y
- * eso es falso: los originales van de 432x768 a 1024x768.
+ * También escribe src/data/dimensiones.json con el tamaño real de cada archivo
+ * generado, para que cada <img> reserve el hueco correcto.
  */
 import sharp from 'sharp';
 import fs from 'node:fs';
@@ -20,17 +19,10 @@ const ORIGINALES = 'fotos-src';
 const SALIDA = 'public/img/fotos';
 const DIMENSIONES = 'src/data/dimensiones.json';
 
-// Las que se ven a sangre o a ancho completo conservan resolución.
-const GRANDES = new Set(['f52', 'f20', 'f17', 'f31', 'f30', 'f03', 'f44', 'f13', 'f54', 'f08']);
-
-// La foto del hero ocupa la pantalla entera. El original mide 1024x576, así
-// que a pantalla completa el navegador la estiraba al doble con un filtro
-// barato y encima sobre un WebP de calidad 58: quedaba blanda y con bloques.
-// Se genera aparte, al doble de ancho y con calidad alta. Ampliar no inventa
-// detalle, pero evita que se sumen las dos degradaciones.
-const HERO = 'f52';
-const HERO_ANCHO = 2048;
-const HERO_CALIDAD = 74;
+// Las que se ven grandes conservan su resolución completa. Ninguna foto del
+// hotel pasa de 1024 px de ancho: por eso el diseño no las estira a pantalla
+// completa. f07 y f53 son las dos fotos de la portada.
+const GRANDES = new Set(['f52', 'f20', 'f17', 'f31', 'f30', 'f03', 'f44', 'f13', 'f54', 'f08', 'f07', 'f53']);
 
 // Las que el sitio referencia. El resto de la lista no se procesa.
 const USADAS = [
@@ -76,47 +68,25 @@ let descargadas = 0;
 const fallidas = [];
 const dimensiones = {};
 
-async function anotar(clave, archivo) {
-  const { width, height } = await sharp(archivo).metadata();
-  dimensiones[clave] = [width, height];
-  bytes += fs.statSync(archivo).size;
-}
-
 for (const id of USADAS) {
   const dest = path.join(SALIDA, id + '.webp');
-  const destHero = id === HERO ? path.join(SALIDA, id + '-hero.webp') : null;
-
-  const local = fs.existsSync(path.join(ORIGINALES, id + '.jpg'));
-  const faltan = !fs.existsSync(dest) || (destHero && !fs.existsSync(destHero));
-  if (faltan && !local) descargadas++;
 
   // Una foto que no se pueda resolver no debe tumbar el build entero: se
   // registra y se sigue. Al final se listan las que faltaron.
   try {
-    if (faltan) {
-      const bruto = await origen(id);
-
-      if (!fs.existsSync(dest)) {
-        const grande = GRANDES.has(id);
-        await sharp(bruto)
-          .resize({ width: grande ? 1024 : 540, withoutEnlargement: true })
-          .webp({ quality: grande ? 58 : 50, effort: 6 })
-          .toFile(dest);
-      }
-
-      if (destHero && !fs.existsSync(destHero)) {
-        await sharp(bruto)
-          .resize({ width: HERO_ANCHO, kernel: 'lanczos3', withoutEnlargement: false })
-          // Un enfoque suave después de ampliar: devuelve el borde a las
-          // estrellas, que es lo primero que se pierde al interpolar.
-          .sharpen({ sigma: 0.7, m1: 0.5, m2: 0.9 })
-          .webp({ quality: HERO_CALIDAD, effort: 6 })
-          .toFile(destHero);
-      }
+    if (!fs.existsSync(dest)) {
+      if (!fs.existsSync(path.join(ORIGINALES, id + '.jpg'))) descargadas++;
+      const grande = GRANDES.has(id);
+      await sharp(await origen(id))
+        .resize({ width: grande ? 1024 : 540, withoutEnlargement: true })
+        // Las grandes se ven cerca de su tamaño real: calidad alta para que
+        // la compresión no las ablande.
+        .webp({ quality: grande ? 76 : 50, effort: 6 })
+        .toFile(dest);
     }
-
-    await anotar(id, dest);
-    if (destHero) await anotar(id + '-hero', destHero);
+    const { width, height } = await sharp(dest).metadata();
+    dimensiones[id] = [width, height];
+    bytes += fs.statSync(dest).size;
   } catch (e) {
     fallidas.push(`${id} (${e.message})`);
   }

@@ -3,7 +3,6 @@ import { Icon } from 'astro-icon/components';
 import Base from '../layouts/Base.astro';
 import Hero from '../components/Hero.astro';
 import FranjaConfianza from '../components/FranjaConfianza.astro';
-import Buscador from '../components/Buscador.astro';
 import Titulo from '../components/Titulo.astro';
 import Foto from '../components/Foto.astro';
 import Resenas from '../components/Resenas.astro';
@@ -58,7 +57,6 @@ const [principal, ...secundarias] = habitaciones;
 <Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/">
   <Hero lang={lang} />
   <FranjaConfianza lang={lang} />
-  <Buscador lang={lang} />
 
   <!-- Presentación: bloque de texto estrecho contra un par de fotos desfasadas -->
   <section class="py-20 lg:py-28">
@@ -115,11 +113,11 @@ const [principal, ...secundarias] = habitaciones;
             />
           </div>
           <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep via-deep/70 to-transparent p-6 pt-24">
-            <h3 class="font-display text-2xl font-bold text-white">{principal.nombre[lang]}</h3>
+            <h3 class="font-display text-2xl font-semibold text-white">{principal.nombre[lang]}</h3>
             <p class="mt-2 max-w-sm text-sm text-white/75">{principal.resumen[lang]}</p>
             <p class="mt-4 text-sm text-white">
               {t('hab.desde')}
-              <span class="font-display text-lg font-bold">{cop(principal.precios.baja, lang)}</span>
+              <span class="font-display text-lg font-semibold">{cop(principal.precios.baja, lang)}</span>
             </p>
           </div>
         </a>
@@ -137,13 +135,13 @@ const [principal, ...secundarias] = habitaciones;
                   />
                 </div>
                 <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-deep via-deep/70 to-transparent p-5 pt-16">
-                  <h3 class="font-display text-lg font-bold text-white">{h.nombre[lang]}</h3>
+                  <h3 class="font-display text-lg font-semibold text-white">{h.nombre[lang]}</h3>
                   <p class="mt-1.5 text-xs text-white/70">
                     {h.capacidad} {t('hab.personas')}, {h.m2} m²
                   </p>
                   <p class="mt-2 text-sm text-white">
                     {t('hab.desde')}
-                    <span class="font-display font-bold">{cop(h.precios.baja, lang)}</span>
+                    <span class="font-display font-semibold">{cop(h.precios.baja, lang)}</span>
                   </p>
                 </div>
               </a>
@@ -199,8 +197,7 @@ const [principal, ...secundarias] = habitaciones;
     <div class="contenedor flex min-h-[36rem] items-end py-16 lg:min-h-[44rem] lg:py-24">
       <div class="revelar max-w-lg">
         <h2
-          class="font-display text-titulo font-extrabold text-white"
-          style="font-variation-settings:'opsz' 72,'wdth' 90"
+          class="font-display text-titulo font-semibold text-white"
         >
           {lang === 'es' ? 'Cincuenta años haciendo el mismo plato' : 'Fifty years making the same dish'}
         </h2>
@@ -247,7 +244,7 @@ const [principal, ...secundarias] = habitaciones;
                 class="transition-transform duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.05]"
               />
             </div>
-            <h3 class="mt-4 font-display text-lg font-bold">{nombre}</h3>
+            <h3 class="mt-4 font-display text-lg font-semibold">{nombre}</h3>
             <p class="mt-1.5 text-sm leading-relaxed text-ink-3">{desc}</p>
           </li>
         ))

@@ -1,50 +1,110 @@
 ---
 import { Icon } from 'astro-icon/components';
 import { useTranslations, ruta } from '../i18n/ui';
+import { hotel, habitaciones } from '../data/hotel';
+import { cop, dec } from '../lib/precios';
 import type { Lang } from '../data/hotel';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = useTranslations(lang);
+
+const desde = Math.min(...habitaciones.map((h) => h.precios.baja));
 ---
 
-<section class="border-b border-line bg-panel">
-  <form
-    id="buscador"
-    action={ruta(lang, '/reservar')}
-    method="get"
-    class="contenedor grid gap-5 py-7 lg:grid-cols-[1fr_1fr_11rem_auto] lg:items-end lg:gap-4"
-  >
-    <div>
-      <label class="etiqueta" for="b-entrada">{t('buscador.entrada')}</label>
-      <input class="campo" type="date" id="b-entrada" name="entrada" required />
-    </div>
-    <div>
-      <label class="etiqueta" for="b-salida">{t('buscador.salida')}</label>
-      <input class="campo" type="date" id="b-salida" name="salida" required />
-    </div>
-    <div>
-      <label class="etiqueta" for="b-huespedes">{t('buscador.huespedes')}</label>
-      <select class="campo" id="b-huespedes" name="huespedes">
+<!--
+  Barra de consulta de la portada. La misma idea que en otras maquetas (fechas,
+  personas y un botón en una sola pieza), pero con la marca del hotel:
+  rectangular, sobre el panel oscuro, botón oro. Envía a /reservar, que con las
+  dos fechas salta directo a elegir habitación.
+-->
+<form id="buscador" action={ruta(lang, '/reservar')} method="get" class="mt-10">
+  <div class="grid grid-cols-2 border border-line-2 bg-panel sm:grid-cols-[1fr_1fr_0.85fr_auto]">
+    <label
+      for="b-entrada"
+      class="celda border-b border-r border-line sm:border-b-0"
+    >
+      <span class="block text-[0.6875rem] text-ink-3">{t('buscador.entrada')}</span>
+      <input
+        id="b-entrada"
+        name="entrada"
+        type="date"
+        required
+        class="mt-1 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
+      />
+    </label>
+
+    <label for="b-salida" class="celda border-b border-line sm:border-b-0 sm:border-r">
+      <span class="block text-[0.6875rem] text-ink-3">{t('buscador.salida')}</span>
+      <input
+        id="b-salida"
+        name="salida"
+        type="date"
+        required
+        class="mt-1 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
+      />
+    </label>
+
+    <label for="b-huespedes" class="celda relative border-r border-line">
+      <span class="block text-[0.6875rem] text-ink-3">{t('buscador.huespedes')}</span>
+      <select
+        id="b-huespedes"
+        name="huespedes"
+        class="mt-1 w-full appearance-none bg-transparent pr-6 text-[0.9375rem] text-ink focus-visible:outline-none"
+      >
         {
           [1, 2, 3, 4, 5, 6, 7].map((n) => (
-            <option value={n} selected={n === 2}>
+            <option value={n} selected={n === 2} class="bg-panel">
               {n} {n === 1 ? t('hab.persona') : t('hab.personas')}
             </option>
           ))
         }
       </select>
-    </div>
-    <button type="submit" class="btn btn-oro h-[46px] w-full lg:w-auto">
-      {t('buscador.buscar')}
-    </button>
+      <Icon
+        name="ph:caret-down"
+        class="pointer-events-none absolute bottom-[1.05rem] right-4 h-3.5 w-3.5 text-ink-3"
+      />
+    </label>
 
-    <p class="flex items-center gap-2 text-xs text-ink-3 lg:col-span-4">
-      <Icon name="ph:shield-check" class="h-4 w-4 shrink-0 text-oro-luz" />
-      {t('buscador.nota')}
-    </p>
-  </form>
-</section>
+    <button type="submit" class="btn btn-oro h-full min-h-[3.75rem] w-full sm:px-7">
+      {t('buscador.consultar')}
+    </button>
+  </div>
+
+  <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[0.8125rem] text-ink-2" data-cifras>
+    <span class="inline-flex items-center gap-1.5">
+      <Icon name="ph:star-fill" class="h-3.5 w-3.5 text-oro" />
+      <strong class="font-semibold text-ink">{dec(hotel.rating, lang)}</strong>
+      · {hotel.totalResenas} {t('buscador.resenas')}
+    </span>
+    <span class="h-3 w-px bg-line-2" aria-hidden="true"></span>
+    <span>
+      {t('hab.desde')} <strong class="font-semibold text-ink">{cop(desde, lang)}</strong>
+      {t('hab.noche')}
+    </span>
+    <span class="h-3 w-px bg-line-2" aria-hidden="true"></span>
+    <span>{t('res.pagoHotel')}</span>
+  </p>
+</form>
+
+<style>
+  /* Cada campo es una celda entera clicable. El foco se marca en la celda, no
+     en el control: un contorno alrededor de un input sin borde queda torcido. */
+  .celda {
+    display: block;
+    padding: 0.7rem 1rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-suave);
+  }
+  .celda:hover {
+    background: var(--color-panel-2);
+  }
+  .celda:focus-within {
+    background: var(--color-panel-2);
+    outline: 2px solid var(--color-oro-2);
+    outline-offset: -2px;
+  }
+</style>
 
 <script>
   import { hoyISO } from '../lib/precios';
