@@ -1,12 +1,11 @@
 ---
 import { Icon } from 'astro-icon/components';
-import { useTranslations, ruta } from '../i18n/ui';
+import { ruta } from '../i18n/ui';
 import { hotel } from '../data/hotel';
 import type { Lang } from '../data/hotel';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const t = useTranslations(lang);
 
 // Este hotel cierra reservas por WhatsApp. En móvil eso no puede estar a tres
 // scrolls de distancia: va fijo abajo, junto al motor de reservas.
@@ -22,15 +21,17 @@ const etiquetas = {
 }[lang];
 ---
 
+<!-- Tres píldoras, como el resto de los botones del sitio. El relleno inferior
+     respeta la zona segura del iPhone. -->
 <div
-  class="grid grid-cols-[auto_1fr_1fr] items-stretch border-t border-line-2 bg-deep/95 backdrop-blur lg:hidden"
-  style="padding-bottom:env(safe-area-inset-bottom)"
+  class="flex items-center gap-2 border-t border-line-2 bg-deep/95 px-3 pt-2.5 backdrop-blur lg:hidden"
+  style="padding-bottom:max(0.625rem, env(safe-area-inset-bottom))"
 >
   <button
     type="button"
     data-compartir
     data-copiado={etiquetas.copiado}
-    class="flex items-center justify-center border-r border-line-2 px-4 text-ink transition-colors hover:text-oro-luz"
+    class="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line-2 text-ink transition-colors hover:border-oro hover:text-oro-luz"
     aria-label={etiquetas.compartir}
   >
     <Icon name="ph:share-network" class="h-5 w-5" />
@@ -40,7 +41,7 @@ const etiquetas = {
     href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`}
     target="_blank"
     rel="noopener"
-    class="flex items-center justify-center gap-2 border-r border-line-2 py-3.5 text-[0.8125rem] font-semibold text-ink"
+    class="flex h-11 flex-1 items-center justify-center gap-2 rounded-full border border-oro/65 text-[0.8125rem] font-semibold text-ink transition-colors hover:border-oro hover:text-oro-luz"
   >
     <Icon name="ph:whatsapp-logo" class="h-[1.125rem] w-[1.125rem]" />
     {etiquetas.wa}
@@ -48,7 +49,7 @@ const etiquetas = {
 
   <a
     href={ruta(lang, '/reservar')}
-    class="flex items-center justify-center gap-2 bg-oro py-3.5 text-[0.8125rem] font-semibold text-granate"
+    class="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-oro text-[0.8125rem] font-semibold text-granate shadow-[inset_0_1px_0_rgb(255_255_255/0.28)] transition-colors hover:bg-oro-2"
   >
     <Icon name="ph:calendar-check" class="h-[1.125rem] w-[1.125rem]" />
     {etiquetas.reservar}

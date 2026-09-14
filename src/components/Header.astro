@@ -59,18 +59,18 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
     <div class="flex items-center gap-3">
       <a
         href={ruta(otro, path)}
-        class="nav-link hidden border border-line-2 px-3 py-1.5 text-xs font-medium uppercase tracking-widest opacity-75 transition-opacity hover:opacity-100 sm:block"
+        class="nav-link hidden rounded-full border border-line-2 px-3.5 py-1.5 text-xs font-medium uppercase tracking-widest opacity-75 transition-opacity hover:opacity-100 sm:block"
         hreflang={otro}
       >
         {otro}
       </a>
-      <a href={ruta(lang, '/reservar')} class="btn btn-oro !px-5 !py-2.5 text-xs lg:!px-6 lg:!py-3 lg:text-sm">
+      <a href={ruta(lang, '/reservar')} class="btn btn-oro hidden !px-5 !py-2.5 text-xs sm:inline-flex lg:!px-6 lg:!py-3 lg:text-sm">
         {t('nav.reservar')}
       </a>
       <button
         type="button"
         id="abrir-menu"
-        class="nav-link -mr-2 grid h-11 w-11 place-items-center lg:hidden"
+        class="nav-link -mr-2 grid h-11 w-11 place-items-center rounded-full lg:hidden"
         aria-label={lang === 'es' ? 'Abrir menú' : 'Open menu'}
         aria-expanded="false"
         aria-controls="menu-movil"
@@ -93,7 +93,7 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
     <button
       type="button"
       id="cerrar-menu"
-      class="-mr-2 grid h-11 w-11 place-items-center"
+      class="-mr-2 grid h-11 w-11 place-items-center rounded-full"
       aria-label={lang === 'es' ? 'Cerrar menú' : 'Close menu'}
     >
       <Icon name="ph:x" class="h-6 w-6" />

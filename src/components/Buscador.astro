@@ -13,44 +13,43 @@ const desde = Math.min(...habitaciones.map((h) => h.precios.baja));
 ---
 
 <!--
-  Barra de consulta de la portada. La misma idea que en otras maquetas (fechas,
-  personas y un botón en una sola pieza), pero con la marca del hotel:
-  rectangular, sobre el panel oscuro, botón oro. Envía a /reservar, que con las
-  dos fechas salta directo a elegir habitación.
+  Barra de consulta de la portada: fechas, personas y botón en una sola
+  píldora, con la marca del hotel (panel oscuro, botón oro). En móvil pasa a un
+  bloque redondeado de 2x2. Envía a /reservar, que con las dos fechas salta
+  directo a elegir habitación.
 -->
 <form id="buscador" action={ruta(lang, '/reservar')} method="get" class="mt-10">
-  <div class="grid grid-cols-2 border border-line-2 bg-panel sm:grid-cols-[1fr_1fr_0.85fr_auto]">
-    <label
-      for="b-entrada"
-      class="celda border-b border-r border-line sm:border-b-0"
-    >
+  <div
+    class="grid grid-cols-2 gap-1 rounded-[1.75rem] border border-line-2 bg-panel p-1.5 sm:grid-cols-[1fr_1fr_0.85fr_auto] sm:rounded-full"
+  >
+    <label for="b-entrada" class="celda">
       <span class="block text-[0.6875rem] text-ink-3">{t('buscador.entrada')}</span>
       <input
         id="b-entrada"
         name="entrada"
         type="date"
         required
-        class="mt-1 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
+        class="mt-0.5 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
       />
     </label>
 
-    <label for="b-salida" class="celda border-b border-line sm:border-b-0 sm:border-r">
+    <label for="b-salida" class="celda">
       <span class="block text-[0.6875rem] text-ink-3">{t('buscador.salida')}</span>
       <input
         id="b-salida"
         name="salida"
         type="date"
         required
-        class="mt-1 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
+        class="mt-0.5 w-full bg-transparent text-[0.9375rem] tabular-nums text-ink focus-visible:outline-none"
       />
     </label>
 
-    <label for="b-huespedes" class="celda relative border-r border-line">
+    <label for="b-huespedes" class="celda">
       <span class="block text-[0.6875rem] text-ink-3">{t('buscador.huespedes')}</span>
       <select
         id="b-huespedes"
         name="huespedes"
-        class="mt-1 w-full appearance-none bg-transparent pr-6 text-[0.9375rem] text-ink focus-visible:outline-none"
+        class="mt-0.5 w-full appearance-none bg-transparent pr-6 text-[0.9375rem] text-ink focus-visible:outline-none"
       >
         {
           [1, 2, 3, 4, 5, 6, 7].map((n) => (
@@ -62,11 +61,11 @@ const desde = Math.min(...habitaciones.map((h) => h.precios.baja));
       </select>
       <Icon
         name="ph:caret-down"
-        class="pointer-events-none absolute bottom-[1.05rem] right-4 h-3.5 w-3.5 text-ink-3"
+        class="pointer-events-none absolute bottom-[0.95rem] right-5 h-3.5 w-3.5 text-ink-3"
       />
     </label>
 
-    <button type="submit" class="btn btn-oro h-full min-h-[3.75rem] w-full sm:px-7">
+    <button type="submit" class="btn btn-oro h-full min-h-[3.25rem] w-full sm:px-8">
       {t('buscador.consultar')}
     </button>
   </div>
@@ -91,8 +90,12 @@ const desde = Math.min(...habitaciones.map((h) => h.precios.baja));
   /* Cada campo es una celda entera clicable. El foco se marca en la celda, no
      en el control: un contorno alrededor de un input sin borde queda torcido. */
   .celda {
+    position: relative;
     display: block;
-    padding: 0.7rem 1rem 0.8rem;
+    min-width: 0;
+    padding: 0.6rem 1.25rem 0.7rem;
+    border-radius: 1.25rem;
+    background: color-mix(in srgb, var(--color-panel-2) 55%, transparent);
     cursor: pointer;
     transition: background-color 0.2s var(--ease-suave);
   }
@@ -103,6 +106,31 @@ const desde = Math.min(...habitaciones.map((h) => h.precios.baja));
     background: var(--color-panel-2);
     outline: 2px solid var(--color-oro-2);
     outline-offset: -2px;
+  }
+
+  /* En una fila: celdas transparentes en píldora, separadas por una línea fina
+     que desaparece junto a la celda activa. */
+  @media (min-width: 640px) {
+    .celda {
+      border-radius: var(--radius-pill);
+      background: transparent;
+    }
+    .celda:not(:nth-child(3))::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 28%;
+      height: 44%;
+      width: 1px;
+      background: var(--color-line-2);
+      transition: opacity 0.2s var(--ease-suave);
+    }
+    .celda:hover::after,
+    .celda:focus-within::after,
+    .celda:has(+ .celda:hover)::after,
+    .celda:has(+ .celda:focus-within)::after {
+      opacity: 0;
+    }
   }
 </style>
 

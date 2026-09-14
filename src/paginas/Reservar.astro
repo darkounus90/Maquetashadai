@@ -61,7 +61,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
             <li class="flex items-center gap-2 sm:gap-4" data-indicador={i + 1}>
               <span class="flex items-center gap-2.5">
                 <span
-                  class="grid h-8 w-8 shrink-0 place-items-center border text-xs font-medium transition-colors duration-300"
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-full border text-xs font-medium transition-colors duration-300"
                   data-circulo
                 >
                   {i + 1}
@@ -170,7 +170,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
       <!-- PASO 4 -->
       <section data-paso="4" class="mt-12 hidden">
         <div class="border border-line bg-panel p-8 text-center sm:p-12">
-          <div class="mx-auto grid h-16 w-16 place-items-center bg-oro">
+          <div class="mx-auto grid h-16 w-16 place-items-center rounded-full bg-oro">
             <Icon name="ph:check" class="h-8 w-8 text-granate" />
           </div>
           <h2 class="mt-6 font-display text-seccion font-semibold">{t('res.listo')}</h2>
@@ -322,7 +322,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
 
           const avisoStock =
             !agotada && quedan <= 2
-              ? `<span class="bg-oro px-2.5 py-1 text-[0.7rem] font-semibold text-granate">${
+              ? `<span class="rounded-full bg-oro px-2.5 py-1 text-[0.7rem] font-semibold text-granate">${
                   D.lang === 'es' ? `Quedan ${quedan}` : `${quedan} left`
                 }</span>`
               : '';
