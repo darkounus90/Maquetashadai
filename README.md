@@ -28,16 +28,25 @@ npm run build    # genera dist/
 
 ## Sistema visual
 
-"Arcilla y ceniza". El Desierto de la Tatacoa tiene dos zonas: Cuzco, de arcilla
-roja, y Los Hoyos, de ceniza gris. La paleta es eso: gris frío de base, terracota
-saturada como acento único.
+"Noche y oro", tomado de la identidad del propio hotel: su logo es un óvalo
+dorado con letras granate, y su Instagram lo pone sobre fotos del cielo nocturno
+de la Tatacoa. La paleta es eso: azul noche de base, oro como acento único, y el
+granate del logo solo como texto sobre oro. Los valores se muestrearon de las
+portadas de destacadas, la foto de perfil y el logo de su web.
 
 - Modo oscuro **bloqueado** a propósito: lo que vende este hotel es el cielo de
   noche, y una interfaz clara lo contradice.
 - Radio de esquina **0** en todo el sistema, sin excepciones.
 - Display: Bricolage Grotesque. Texto: Archivo. Iconos: Phosphor.
-- Acento pleno (`--color-brasa`) para rellenos con texto blanco; variante clara
-  (`--color-brasa-luz`) para texto pequeño, que es lo único que pasa AA en 14px.
+- Oro (`--color-oro`, `#d69948`) para rellenos, **siempre con texto granate**
+  (`--color-granate`, `#582832`, 4,8:1), como en el logo. Blanco sobre oro da
+  2,5:1 y no pasa.
+- Oro claro (`--color-oro-luz`) para texto de acento sobre fondo oscuro.
+- Todo el texto pasa AA sobre todas las superficies, y los bordes de campo
+  (`--color-line-3`) pasan 3:1.
+- Ojo con los nombres: un color llamado `base` choca con la clase de tamaño
+  `text-base` de Tailwind 4 y pinta el texto del color del fondo. Por eso el
+  fondo se llama `fondo`.
 
 Los tokens viven en `src/styles/global.css`. Cambiar la paleta es cambiar ese
 bloque `@theme`.

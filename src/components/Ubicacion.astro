@@ -34,7 +34,7 @@ const activar = {
 }[lang];
 ---
 
-<section class="bg-base py-24 lg:py-32">
+<section class="bg-fondo py-24 lg:py-32">
   <div class="contenedor grid gap-12 lg:grid-cols-12 lg:items-center lg:gap-16">
     <div class="lg:col-span-5">
       <Titulo
@@ -43,7 +43,7 @@ const activar = {
       />
 
       <address class="revelar mt-8 flex items-start gap-3 text-sm not-italic leading-relaxed text-ink-2">
-        <Icon name="ph:map-pin" class="mt-0.5 h-4 w-4 shrink-0 text-brasa-luz" />
+        <Icon name="ph:map-pin" class="mt-0.5 h-4 w-4 shrink-0 text-oro-luz" />
         {hotel.direccion}
       </address>
 
@@ -52,7 +52,7 @@ const activar = {
           hotel.distancias[lang].map(([lugar, dist]) => (
             <div class="flex items-baseline justify-between gap-6 py-3.5">
               <dt class="text-sm text-ink-2">{lugar}</dt>
-              <dd class="shrink-0 font-display text-sm text-brasa-luz">{dist}</dd>
+              <dd class="shrink-0 font-display text-sm text-oro-luz">{dist}</dd>
             </div>
           ))
         }
@@ -66,7 +66,7 @@ const activar = {
         class="flex items-center justify-between gap-4 border-b border-line-2 px-4 py-3"
       >
         <span class="rotulo flex items-center gap-2 text-ink-2">
-          <Icon name="ph:crosshair" class="h-3.5 w-3.5 shrink-0 text-brasa-luz" />
+          <Icon name="ph:crosshair" class="h-3.5 w-3.5 shrink-0 text-oro-luz" />
           <span class="tabular-nums">{coordenadas}</span>
         </span>
         <span class="rotulo hidden text-ink-3 sm:block">Villavieja · Huila</span>
@@ -76,7 +76,7 @@ const activar = {
            esconde su propio logo y su atribución, que no se pueden omitir. Con
            `aspect-ratio` y `min-height` juntos el ancho se calcula del alto y
            la placa se sale de la pantalla. -->
-      <div id="placa-mapa" class="relative h-80 bg-base-2 lg:h-auto lg:aspect-[16/10]">
+      <div id="placa-mapa" class="relative h-80 bg-fondo-2 lg:h-auto lg:aspect-[16/10]">
         <iframe
           src={mapa}
           title={lang === 'es'
@@ -112,7 +112,7 @@ const activar = {
           href={maps}
           target="_blank"
           rel="noopener"
-          class="rotulo group flex shrink-0 items-center gap-2 text-ink transition-colors hover:text-brasa-luz"
+          class="rotulo group flex shrink-0 items-center gap-2 text-ink transition-colors hover:text-oro-luz"
         >
           {t('ubi.mapa')}
           <Icon

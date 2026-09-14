@@ -15,10 +15,10 @@ const datos = {
 };
 ---
 
-<section class="border-b border-line bg-base">
+<section class="border-b border-line bg-fondo">
   <div class="contenedor flex flex-col gap-7 py-7 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
     <div class="flex items-center gap-4">
-      <span class="bg-brasa px-3 py-2 font-display text-xl font-bold text-white">
+      <span class="bg-oro px-3 py-2 font-display text-xl font-bold text-granate">
         {dec(hotel.rating, lang)}
       </span>
       <span class="leading-tight">
@@ -38,7 +38,7 @@ const datos = {
       {
         datos[lang].map((d) => (
           <li class="flex items-center gap-2">
-            <Icon name="ph:check" class="h-3.5 w-3.5 shrink-0 text-brasa-luz" />
+            <Icon name="ph:check" class="h-3.5 w-3.5 shrink-0 text-oro-luz" />
             {d}
           </li>
         ))

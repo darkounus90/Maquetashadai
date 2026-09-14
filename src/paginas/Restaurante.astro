@@ -147,7 +147,7 @@ const espacios = {
         {
           restaurante.menu[lang].map((sec) => (
             <div class="revelar">
-              <h3 class="font-display text-xl font-normal text-brasa-luz">{sec.seccion}</h3>
+              <h3 class="font-display text-xl font-normal text-oro-luz">{sec.seccion}</h3>
               <ul class="mt-6 divide-y divide-line border-t border-line">
                 {sec.platos.map(([nombre, desc, precio]) => (
                   <li class="flex items-baseline justify-between gap-6 py-4">
@@ -169,7 +169,7 @@ const espacios = {
       <p class="revelar mt-14 text-xs text-ink-3">{t('rest.nota')}</p>
 
       <div class="revelar mt-10 flex flex-wrap gap-3">
-        <a href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`} rel="noopener" class="btn btn-brasa">
+        <a href={`https://wa.me/${hotel.whatsapp}?text=${waMsg}`} rel="noopener" class="btn btn-oro">
           {t('rest.reservarMesa')}
         </a>
         <a href={`tel:${hotel.tel}`} class="btn btn-sobre-foto">{hotel.telVisible}</a>

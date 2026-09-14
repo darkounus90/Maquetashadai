@@ -155,21 +155,21 @@ const [principal, ...secundarias] = habitaciones;
   </section>
 
   <!-- Servicios: tres grupos con reglas finas, no doce tarjetas -->
-  <section class="border-t border-line bg-base-2 py-20 lg:py-28">
+  <section class="border-t border-line bg-fondo-2 py-20 lg:py-28">
     <div class="contenedor">
       <Titulo titulo={lang === 'es' ? 'Todo incluido en la estadía' : 'All part of the stay'} />
       <div class="mt-12 grid gap-x-12 gap-y-10 md:grid-cols-3">
         {
           chunks.map((grupo, gi) => (
             <div class="revelar" style={`transition-delay:${gi * 80}ms`}>
-              <h3 class="rotulo text-brasa-luz">{grupos[lang][gi]}</h3>
+              <h3 class="rotulo text-oro-luz">{grupos[lang][gi]}</h3>
               <dl class="mt-5 divide-y divide-line border-t border-line">
                 {grupo.map((s) => {
                   const [nombre, desc] = s[lang];
                   return (
                     <div class="py-4">
                       <dt class="flex items-center gap-2.5 text-sm font-semibold">
-                        <Icon name={s.icono} class="h-5 w-5 shrink-0 text-brasa-luz" />
+                        <Icon name={s.icono} class="h-5 w-5 shrink-0 text-oro-luz" />
                         {nombre}
                       </dt>
                       <dd class="mt-1.5 pl-[1.875rem] text-sm leading-relaxed text-ink-3">{desc}</dd>
@@ -211,7 +211,7 @@ const [principal, ...secundarias] = habitaciones;
               : 'Rabbit au gratin has been our specialty since before the desert became a destination. The kitchen crosses Colombia with Uruguay, the terrace has a BBQ and shade for fifty, and the covered dining room seats thirty-five.'
           }
         </p>
-        <blockquote class="mt-8 border-l-2 border-brasa pl-5">
+        <blockquote class="mt-8 border-l-2 border-oro pl-5">
           <p class="text-[0.9375rem] italic leading-relaxed text-white/90">
             {lang === 'es' ? '«La comida es un 10/10.»' : '"The food is a 10/10."'}
           </p>
@@ -219,7 +219,7 @@ const [principal, ...secundarias] = habitaciones;
             Brayan, {lang === 'es' ? 'huésped verificado' : 'verified guest'}
           </cite>
         </blockquote>
-        <a href={ruta(lang, '/restaurante')} class="btn btn-brasa mt-9">{t('rest.ver')}</a>
+        <a href={ruta(lang, '/restaurante')} class="btn btn-oro mt-9">{t('rest.ver')}</a>
       </div>
     </div>
   </section>

@@ -131,7 +131,7 @@ const schemaMiga = {
           {
             servicios.map((s) => (
               <li class="flex items-start gap-3 text-sm text-ink-2">
-                <Icon name={s.icono} class="mt-px h-[1.125rem] w-[1.125rem] shrink-0 text-brasa-luz" />
+                <Icon name={s.icono} class="mt-px h-[1.125rem] w-[1.125rem] shrink-0 text-oro-luz" />
                 {s[lang][0]}
               </li>
             ))
@@ -142,7 +142,7 @@ const schemaMiga = {
         <dl class="mt-6 space-y-4">
           {
             temps.map((tp) => (
-              <div class="border border-line bg-base-2 p-5">
+              <div class="border border-line bg-fondo-2 p-5">
                 <div class="flex items-baseline justify-between gap-6">
                   <dt class="font-display text-base">{temporadas[tp].nombre[lang]}</dt>
                   <dd class="font-display text-lg">
@@ -208,7 +208,7 @@ const schemaMiga = {
       </aside>
     </div>
 
-    <section class="bg-base-2 py-24 lg:py-32">
+    <section class="bg-fondo-2 py-24 lg:py-32">
       <div class="contenedor">
         <h2 class="revelar font-display text-seccion font-light">{t('hab.otras')}</h2>
         <div class="mt-12 grid gap-10 sm:grid-cols-2 lg:gap-8">

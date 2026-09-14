@@ -11,7 +11,7 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<section class="bg-base-2 py-24 lg:py-32">
+<section class="bg-fondo-2 py-24 lg:py-32">
   <div class="contenedor">
     <div class="grid gap-12 lg:grid-cols-12 lg:gap-16">
       <div class="lg:col-span-5">
@@ -42,7 +42,7 @@ const t = useTranslations(lang);
                   <dd class="font-display text-sm">{dec(p.n, lang)}</dd>
                 </div>
                 <div class="mt-1.5 h-[3px] w-full overflow-hidden bg-line">
-                  <div class="h-full bg-brasa" style={`width:${p.n * 10}%`} />
+                  <div class="h-full bg-oro" style={`width:${p.n * 10}%`} />
                 </div>
               </div>
             ))

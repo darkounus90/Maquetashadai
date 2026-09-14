@@ -49,7 +49,7 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
           >
             {t(e.key)}
             {path === e.to && (
-              <span class="absolute -bottom-1.5 left-0 h-px w-full bg-brasa" aria-hidden="true" />
+              <span class="absolute -bottom-1.5 left-0 h-px w-full bg-oro" aria-hidden="true" />
             )}
           </a>
         ))
@@ -64,7 +64,7 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
       >
         {otro}
       </a>
-      <a href={ruta(lang, '/reservar')} class="btn btn-brasa !px-5 !py-2.5 text-xs lg:!px-6 lg:!py-3 lg:text-sm">
+      <a href={ruta(lang, '/reservar')} class="btn btn-oro !px-5 !py-2.5 text-xs lg:!px-6 lg:!py-3 lg:text-sm">
         {t('nav.reservar')}
       </a>
       <button
@@ -114,7 +114,7 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
   </nav>
 
   <div class="contenedor mt-10 flex flex-col gap-4">
-    <a href={ruta(lang, '/reservar')} class="btn btn-brasa w-full">{t('nav.reservar')}</a>
+    <a href={ruta(lang, '/reservar')} class="btn btn-oro w-full">{t('nav.reservar')}</a>
     <a href={ruta(otro, path)} class="btn btn-sobre-foto w-full" hreflang={otro}>
       {otro === 'en' ? 'English' : 'Español'}
     </a>
@@ -124,12 +124,12 @@ const otro: Lang = lang === 'es' ? 'en' : 'es';
 <style>
   /* Sobre la fotografía del hero: sin fondo, solo un velo para legibilidad. */
   #cabecera[data-solido='false'] {
-    background: linear-gradient(to bottom, rgb(8 9 10 / 0.6), transparent);
+    background: linear-gradient(to bottom, rgb(8 11 15 / 0.6), transparent);
   }
   /* Tras salir del hero, y en todas las páginas interiores. */
   #cabecera[data-solido='true'],
   #cabecera[data-fijo='true'] {
-    background: color-mix(in srgb, var(--color-base) 92%, transparent);
+    background: color-mix(in srgb, var(--color-fondo) 92%, transparent);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-line);
   }

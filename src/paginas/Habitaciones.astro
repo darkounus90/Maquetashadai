@@ -96,7 +96,7 @@ const aloAncho = habitaciones[2];
             </dl>
 
             <div class="mt-8 flex flex-wrap gap-3">
-              <a href={ruta(lang, `/reservar?habitacion=${h.slug}`)} class="btn btn-brasa">
+              <a href={ruta(lang, `/reservar?habitacion=${h.slug}`)} class="btn btn-oro">
                 {t('hab.reservar')}
               </a>
               <a href={ruta(lang, `/habitaciones/${h.slug}`)} class="btn btn-linea">{t('hab.ver')}</a>
@@ -108,7 +108,7 @@ const aloAncho = habitaciones[2];
   </div>
 
   <!-- La familiar rompe el zigzag: banda a todo el ancho -->
-  <article class="revelar border-y border-line bg-base-2">
+  <article class="revelar border-y border-line bg-fondo-2">
     <div class="aspect-[21/9] max-h-[32rem] w-full">
       <Foto
         id={aloAncho.fotos[0]}
@@ -123,7 +123,7 @@ const aloAncho = habitaciones[2];
           {aloAncho.capacidad} {t('hab.personas')}, {aloAncho.m2} m², {aloAncho.camas[lang]}
         </p>
         <div class="mt-8 flex flex-wrap gap-3">
-          <a href={ruta(lang, `/reservar?habitacion=${aloAncho.slug}`)} class="btn btn-brasa">
+          <a href={ruta(lang, `/reservar?habitacion=${aloAncho.slug}`)} class="btn btn-oro">
             {t('hab.reservar')}
           </a>
           <a href={ruta(lang, `/habitaciones/${aloAncho.slug}`)} class="btn btn-linea">{t('hab.ver')}</a>
@@ -164,7 +164,7 @@ const aloAncho = habitaciones[2];
             return (
               <div class="border-b border-line py-4">
                 <dt class="flex items-center gap-2.5 text-sm font-semibold">
-                  <Icon name={s.icono} class="h-5 w-5 shrink-0 text-brasa-luz" />
+                  <Icon name={s.icono} class="h-5 w-5 shrink-0 text-oro-luz" />
                   {nombre}
                 </dt>
                 <dd class="mt-1.5 pl-[1.875rem] text-sm leading-relaxed text-ink-3">{desc}</dd>

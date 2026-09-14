@@ -46,7 +46,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
 <Base lang={lang} title={meta[lang].title} description={meta[lang].description} path="/reservar">
   <script type="application/json" id="datos-reserva" set:html={JSON.stringify(datos)} is:inline />
 
-  <div class="min-h-screen bg-base-2 pb-24 pt-32 lg:pt-40">
+  <div class="min-h-screen bg-fondo-2 pb-24 pt-32 lg:pt-40">
     <div class="contenedor max-w-4xl">
       <header class="text-center">
         <h1 class="font-display text-titulo font-extrabold" style="font-variation-settings:'opsz' 72,'wdth' 90">
@@ -103,7 +103,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
             </div>
           </div>
 
-          <p id="r-error-1" class="mt-4 hidden text-sm text-brasa-luz" role="alert"></p>
+          <p id="r-error-1" class="mt-4 hidden text-sm text-oro-luz" role="alert"></p>
 
           <div class="mt-8 flex justify-end">
             <button type="button" class="btn btn-claro" data-ir="2">{t('res.continuar')}</button>
@@ -152,7 +152,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
                 </div>
               </div>
 
-              <p id="r-error-3" class="mt-4 hidden text-sm text-brasa-luz" role="alert"></p>
+              <p id="r-error-3" class="mt-4 hidden text-sm text-oro-luz" role="alert"></p>
 
               <div class="mt-8 flex justify-between gap-4">
                 <button type="button" class="btn btn-linea" data-ir="2">{t('res.volver')}</button>
@@ -170,15 +170,15 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
       <!-- PASO 4 -->
       <section data-paso="4" class="mt-12 hidden">
         <div class="border border-line bg-panel p-8 text-center sm:p-12">
-          <div class="mx-auto grid h-16 w-16 place-items-center bg-brasa">
-            <Icon name="ph:check" class="h-8 w-8 text-white" />
+          <div class="mx-auto grid h-16 w-16 place-items-center bg-oro">
+            <Icon name="ph:check" class="h-8 w-8 text-granate" />
           </div>
           <h2 class="mt-6 font-display text-seccion font-bold">{t('res.listo')}</h2>
           <p class="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ink-2">
             {t('res.listoTexto')}
           </p>
 
-          <p class="mt-6 inline-flex items-baseline gap-3 border border-line bg-base-2 px-5 py-2.5">
+          <p class="mt-6 inline-flex items-baseline gap-3 border border-line bg-fondo-2 px-5 py-2.5">
             <span class="text-xs uppercase tracking-widest text-ink-3">{t('res.codigo')}</span>
             <span id="r-codigo" class="font-display text-lg"></span>
           </p>
@@ -197,7 +197,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
 
 <style>
   [data-indicador] [data-circulo] {
-    border-color: var(--color-line-2);
+    border-color: var(--color-line-3);
     color: var(--color-ink-3);
     background: var(--color-panel);
   }
@@ -207,9 +207,9 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
     color: var(--color-deep);
   }
   [data-indicador][data-estado='hecho'] [data-circulo] {
-    border-color: var(--color-brasa);
-    background: var(--color-brasa);
-    color: #fff;
+    border-color: var(--color-oro);
+    background: var(--color-oro);
+    color: var(--color-granate);
   }
   [data-indicador] [data-etiqueta] {
     color: color-mix(in srgb, var(--color-ink) 45%, transparent);
@@ -322,7 +322,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
 
           const avisoStock =
             !agotada && quedan <= 2
-              ? `<span class="bg-brasa px-2.5 py-1 text-[0.7rem] font-semibold text-white">${
+              ? `<span class="bg-oro px-2.5 py-1 text-[0.7rem] font-semibold text-granate">${
                   D.lang === 'es' ? `Quedan ${quedan}` : `${quedan} left`
                 }</span>`
               : '';
@@ -371,7 +371,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
                     agotada
                       ? ''
                       : `<button type="button" data-elegir="${h.slug}" class="btn ${
-                          elegida ? 'btn-brasa' : 'btn-claro'
+                          elegida ? 'btn-oro' : 'btn-claro'
                         } !px-5 !py-2.5 text-xs">${
                           elegida ? T('res.seleccionada') : T('res.seleccionar')
                         }</button>`
@@ -461,7 +461,7 @@ const pasos = [t('res.paso1'), t('res.paso2'), t('res.paso3'), t('res.paso4')];
 
       const caja = document.getElementById('r-confirmacion');
       if (caja) {
-        caja.innerHTML = `<dl class="divide-y divide-line border border-line bg-base-2 px-5">
+        caja.innerHTML = `<dl class="divide-y divide-line border border-line bg-fondo-2 px-5">
           ${filas
             .map(
               ([k, v]) =>

@@ -1,38 +1,47 @@
 @import 'tailwindcss';
 
 /* ---------------------------------------------------------------------------
-   Sistema visual: "arcilla y ceniza".
-   El Desierto de la Tatacoa tiene dos zonas: Cuzco, de arcilla roja, y Los
-   Hoyos, de ceniza gris. La paleta es exactamente eso: gris frío de ceniza
-   como base, terracota saturada como único acento. El sitio está bloqueado en
-   modo oscuro a propósito: el producto que vende este hotel es el cielo de
-   noche, y una interfaz clara lo contradice.
+   Sistema visual: "noche y oro".
+   Tomado de la identidad del propio hotel. Su logo es un ovalo dorado con letras
+   granate, y su Instagram lo pone sobre fotos del cielo nocturno de la Tatacoa.
+   Los valores se muestrearon de las portadas de destacadas, la foto de perfil y
+   el logo de su web: azul noche de base, oro como acento unico, granate solo
+   como texto sobre oro. El sitio esta bloqueado en modo oscuro a proposito: lo
+   que vende este hotel es el cielo de noche.
    Radio de esquina: 0 en todo el sistema. Sin excepciones.
+
+   OJO con los nombres. En Tailwind 4 un color llamado `base` choca con la clase
+   de tamano `text-base` y pinta el texto del color del fondo. Por eso el fondo
+   se llama `fondo`.
 --------------------------------------------------------------------------- */
 
 @theme {
-  /* Superficies */
-  --color-base: #101315;
-  --color-base-2: #171b1e;
-  --color-deep: #08090a;
-  --color-panel: #1c2124;
-  --color-panel-2: #242a2e;
+  /* Superficies: el azul noche de sus publicaciones */
+  --color-fondo: #0e1319;
+  --color-fondo-2: #131a22;
+  --color-deep: #080b0f;
+  --color-panel: #19222c;
+  --color-panel-2: #212c37;
 
-  /* Líneas */
-  --color-line: #282f33;
-  --color-line-2: #3b444a;
+  /* Lineas. line-3 es para bordes de campo: pasa 3:1 sobre panel. */
+  --color-line: #26313c;
+  --color-line-2: #3a4652;
+  --color-line-3: #6e6c66;
 
-  /* Texto */
-  --color-ink: #eceeef;
-  --color-ink-2: #a3abb0;
-  --color-ink-3: #6b7479;
+  /* Texto: crema calido que acompana al oro. ink-3 pasa AA incluso sobre panel-2. */
+  --color-ink: #f4eee3;
+  --color-ink-2: #bdb4a5;
+  --color-ink-3: #97928a;
 
-  /* Acento único: brasa. Se usa igual en toda la página, sin segundo acento. */
-  --color-brasa: #c4462a;
-  --color-brasa-2: #e2583a;
-  --color-brasa-3: #8f2f1a;
-  /* Variante para texto pequeño: el acento pleno no pasa AA en 14px. */
-  --color-brasa-luz: #ff8a6a;
+  /* Acento unico: el oro del ovalo. Como relleno lleva SIEMPRE texto granate
+     (4,8:1); blanco sobre oro da 2,5:1 y no pasa. */
+  --color-oro: #d69948;
+  --color-oro-2: #e2a54e;
+  --color-oro-3: #996726;
+  /* Oro claro, el del logo: texto de acento sobre fondo oscuro. */
+  --color-oro-luz: #e8c866;
+  /* Las letras del logo. Solo sobre oro: sobre el fondo oscuro no se lee. */
+  --color-granate: #582832;
 
   --font-display: 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
   --font-sans: 'Archivo', ui-sans-serif, system-ui, sans-serif;
@@ -49,12 +58,12 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    background: var(--color-base);
+    background: var(--color-fondo);
     color-scheme: dark;
   }
 
   body {
-    background: var(--color-base);
+    background: var(--color-fondo);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-synthesis-weight: none;
@@ -62,8 +71,8 @@
   }
 
   ::selection {
-    background: var(--color-brasa);
-    color: #fff;
+    background: var(--color-oro);
+    color: var(--color-granate);
   }
 
   h1, h2, h3, h4 {
@@ -77,7 +86,7 @@
   p { text-wrap: pretty; }
 
   :focus-visible {
-    outline: 2px solid var(--color-brasa-2);
+    outline: 2px solid var(--color-oro-2);
     outline-offset: 2px;
   }
 
@@ -93,7 +102,7 @@
   }
 
   ::-webkit-scrollbar { width: 10px; height: 10px; }
-  ::-webkit-scrollbar-track { background: var(--color-base); }
+  ::-webkit-scrollbar-track { background: var(--color-fondo); }
   ::-webkit-scrollbar-thumb { background: var(--color-line-2); }
 }
 
@@ -133,11 +142,12 @@
   }
   .btn:active { transform: translateY(1px); }
 
-  .btn-brasa {
-    background: var(--color-brasa);
-    color: #fff;
+  /* Como el logo: granate sobre oro. */
+  .btn-oro {
+    background: var(--color-oro);
+    color: var(--color-granate);
   }
-  .btn-brasa:hover { background: var(--color-brasa-2); }
+  .btn-oro:hover { background: var(--color-oro-2); }
 
   .btn-claro {
     background: var(--color-ink);
@@ -158,9 +168,9 @@
 
   /* Sobre fotografía: fondo semiopaco para garantizar contraste AA. */
   .btn-sobre-foto {
-    background: rgb(8 9 10 / 0.55);
+    background: rgb(8 11 15 / 0.55);
     backdrop-filter: blur(8px);
-    border-color: rgb(236 238 239 / 0.4);
+    border-color: rgb(244 238 227 / 0.4);
     color: #fff;
   }
   .btn-sobre-foto:hover {
@@ -172,7 +182,7 @@
   .campo {
     width: 100%;
     background: var(--color-panel);
-    border: 1px solid var(--color-line-2);
+    border: 1px solid var(--color-line-3);
     padding: 0.8rem 0.9rem;
     font-size: 0.9375rem;
     color: var(--color-ink);
@@ -181,7 +191,7 @@
   .campo::placeholder { color: var(--color-ink-3); }
   .campo:focus {
     outline: none;
-    border-color: var(--color-brasa-2);
+    border-color: var(--color-oro-2);
     background: var(--color-panel-2);
   }
 

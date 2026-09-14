@@ -137,7 +137,7 @@ const schema = {
          hotel. Quitar estas dos líneas al publicar en el dominio definitivo. -->
     <meta name="robots" content="noindex, nofollow" />
 
-    <meta name="theme-color" content="#101315" />
+    <meta name="theme-color" content="#0e1319" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -161,7 +161,7 @@ const schema = {
   <body>
     <a
       href="#contenido"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-brasa focus:px-5 focus:py-3 focus:text-sm focus:text-white"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-oro focus:px-5 focus:py-3 focus:text-sm focus:text-granate"
     >
       {lang === 'es' ? 'Saltar al contenido' : 'Skip to content'}
     </a>
@@ -193,11 +193,11 @@ const schema = {
           const copiado = btn.dataset.copiado;
           if (texto) texto.textContent = copiado;
           else btn.setAttribute('aria-label', copiado);
-          btn.classList.add('text-brasa-luz', 'opacity-100');
+          btn.classList.add('text-oro-luz', 'opacity-100');
           setTimeout(() => {
             if (texto) texto.textContent = previo;
             else btn.setAttribute('aria-label', previo);
-            btn.classList.remove('text-brasa-luz', 'opacity-100');
+            btn.classList.remove('text-oro-luz', 'opacity-100');
           }, 1800);
         };
 
